@@ -1,0 +1,8 @@
+# Backend ignores
+backend/node_modules/
+backend/.env
+
+# Frontend ignores (We will use these later)
+frontend/node_modules/
+frontend/.env
+frontend/dist/

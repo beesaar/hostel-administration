@@ -65,6 +65,23 @@ const hostelSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // --- Sprint 2: Manager Module Fields ---
+    facilities: {
+      type: [String],
+      default: [],
+    },
+    hostelRules: {
+      type: [String],
+      default: [],
+    },
+    startingRent: {
+      type: Number,
+      default: 0,
+    },
+    securityDeposit: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
       enum: ['Pending', 'Approved', 'Rejected'],

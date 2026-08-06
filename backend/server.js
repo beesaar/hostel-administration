@@ -24,6 +24,7 @@ app.get('/', (req, res) => {
 // 6. Mount API Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/manager', require('./routes/managerRoutes'));
 
 // 7. Define Server Port & Start Server
 const PORT = process.env.PORT || 5000;

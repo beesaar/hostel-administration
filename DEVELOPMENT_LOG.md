@@ -4,6 +4,26 @@
 
 ---
 
+## 📊 Project Progress Tracker
+
+```text
+Progress: [█████████████████████████████████░░░░░░░░░░░░░] 66% Completed (6 / 9 Phases)
+```
+
+| Phase # | Module / Feature Name | Status | Completion Date |
+| :---: | :--- | :---: | :---: |
+| **Phase 1** | Project Setup & MVC Architecture | ✅ **Completed** | Aug 6, 2026 |
+| **Phase 2** | MongoDB Atlas Cloud Connection Layer | ✅ **Completed** | Aug 6, 2026 |
+| **Phase 3** | User Authentication & RBAC (JWT & bcrypt) | ✅ **Completed** | Aug 6, 2026 |
+| **Phase 4** | Admin Backend Module (Moderation & Analytics) | ✅ **Completed** | Aug 6, 2026 |
+| **Phase 5** | Admin Frontend Portal & UI Integration | ✅ **Completed** | Aug 6, 2026 |
+| **Phase 6** | Hostel Manager Module (CRUD, Dashboard & Frontend) | ✅ **Completed** | Aug 6, 2026 |
+| **Phase 7** | Student Booking & Room Allocation System | ⏳ *Next Sprint* | Pending |
+| **Phase 8** | Interactive Map (React Leaflet & OpenStreetMap) | ⏳ *Upcoming* | Pending |
+| **Phase 9** | Complaints, Notices & Image Uploads (Multer) | ⏳ *Upcoming* | Pending |
+
+---
+
 # Phase 1: Project Setup & MVC Architecture
 
 ## Date
@@ -361,3 +381,130 @@ frontend/src/
 
 ## Next Sprint
 Phase 6: Hostel Manager Module (Hostel Profile Management, Room Schema, Bed Allocation, and Pricing).
+
+---
+
+# Phase 6 / Sprint 2: Hostel Manager Module (Backend + Frontend)
+
+## Date
+August 6, 2026
+
+## Goal
+Build the complete Hostel Manager module enabling managers to log in, view their personal dashboard, create/edit/delete hostels, and track approval status. Reuse existing authentication system, middleware, and UI components. Implement ownership-scoped CRUD operations so managers can only access their own hostels.
+
+## Backend Progress
+- **Files Created:**
+  - `backend/controllers/managerController.js`: 6 controller methods — `getManagerDashboard`, `getMyHostels`, `getMyHostelById`, `createHostel`, `updateHostel`, `deleteHostel`.
+  - `backend/routes/managerRoutes.js`: Manager-only router with `protect` + `authorize('Hostel Manager')`.
+  - `backend/utils/testManagerApi.js`: Comprehensive 18-assertion integration test script.
+- **Files Modified:**
+  - `backend/models/Hostel.js`: Added 4 new fields — `facilities`, `hostelRules`, `startingRent`, `securityDeposit`.
+  - `backend/server.js`: Mounted `/api/manager` routes.
+- **Models Added:** None (extended existing Hostel model).
+- **Controllers Added:** `managerController.js` (6 methods).
+- **Routes Added:**
+  - `GET /api/manager/dashboard` — Manager dashboard stats (hostel counts by status).
+  - `GET /api/manager/hostels` — List all hostels created by this manager.
+  - `GET /api/manager/hostels/:id` — Get single hostel detail (ownership-scoped).
+  - `POST /api/manager/hostels` — Create new hostel (status defaults to Pending).
+  - `PUT /api/manager/hostels/:id` — Update hostel (ownership-scoped).
+  - `DELETE /api/manager/hostels/:id` — Delete hostel (ownership-scoped).
+- **Middleware Added:** None (reused existing `protect` and `authorize`).
+- **Database Changes:** Extended `hostels` collection with `facilities`, `hostelRules`, `startingRent`, `securityDeposit` fields.
+- **API Endpoints Implemented:** 6 new endpoints under `/api/manager`.
+
+## Frontend Progress
+- **Pages Created:**
+  - `frontend/src/pages/manager/ManagerLoginPage.jsx`: Manager login with cyan theme and demo credential autofill.
+  - `frontend/src/pages/manager/ManagerDashboardPage.jsx`: Metric cards (My Hostels, Pending, Approved, Rejected) and recent submissions table.
+  - `frontend/src/pages/manager/MyHostelsPage.jsx`: Hostel card grid with status filter tabs and delete confirmation.
+  - `frontend/src/pages/manager/AddHostelPage.jsx`: Create hostel form with facilities, rules, and pricing.
+  - `frontend/src/pages/manager/EditHostelPage.jsx`: Pre-filled edit form with update API integration.
+  - `frontend/src/pages/manager/HostelDetailPage.jsx`: Full hostel detail view with capacity stats and action buttons.
+- **Components Created:**
+  - `frontend/src/components/ManagerSidebar.jsx`: Manager navigation with active route highlighting.
+  - `frontend/src/components/ManagerNavbar.jsx`: Manager header bar with profile and system status.
+  - `frontend/src/components/HostelCard.jsx`: Property card with type gradient, stats row, and actions.
+  - `frontend/src/components/HostelForm.jsx`: Sectioned form for Add/Edit operations.
+  - `frontend/src/components/FacilitySelector.jsx`: Multi-select tag picker with 20 presets and custom entry.
+  - `frontend/src/components/ConfirmDialog.jsx`: Generic confirmation modal for destructive actions.
+  - `frontend/src/components/Toast.jsx`: Auto-dismissing notification toast with slide animation.
+- **Layouts Created:**
+  - `frontend/src/layouts/ManagerLayout.jsx`: Manager portal layout (Sidebar + Navbar + Outlet).
+- **Context Added:** None (reused existing `AuthContext`).
+- **Hooks Added:** None (reused existing `useAuth` hook).
+- **Services Added:**
+  - `frontend/src/services/managerService.js`: 6 Axios API methods for manager endpoints.
+- **Routing Changes:**
+  - Updated `App.jsx`: Added `/manager/login`, `/manager/dashboard`, `/manager/hostels`, `/manager/hostels/new`, `/manager/hostels/:id`, `/manager/hostels/:id/edit`.
+  - Updated `RootRedirect` to handle role-based dashboard redirection.
+- **CSS Changes:**
+  - Added `slide-in-right` and `fade-in` keyframe animations in `index.css`.
+
+## Integration
+- Frontend communicates with `GET/POST/PUT/DELETE /api/manager/*` endpoints via Axios.
+- JWT token automatically attached via request interceptor in `services/api.js`.
+- Ownership enforcement happens at the controller level (every query filters by `req.user._id`).
+- Existing Admin module continues to work — Admin can still view all hostels across all managers.
+
+## Testing
+- **How Tested:** Automated 18-assertion integration test (`backend/utils/testManagerApi.js`) covering:
+  - Manager login and dashboard retrieval.
+  - Hostel CRUD lifecycle (Create → Read → Update → Delete).
+  - Field persistence (facilities, rules, rent, deposit, coordinates).
+  - Ownership enforcement (other manager blocked with 404 on view/edit/delete).
+  - Role enforcement (student blocked with 403 from manager routes).
+- **Expected Results:** 18/18 assertions passed.
+- **Build Verification:** `npm run build` completed in 4.06s with 0 errors.
+- **Bugs Found:** None.
+
+## Challenges Faced
+- **Challenge:** Hostel model already existed with `amenities` field from Admin module. Adding a new `facilities` field risked confusion.
+- **Resolution:** Kept both fields for backward compatibility. `amenities` remains for legacy Admin data; `facilities` is the manager-editable field going forward.
+- **Challenge:** Ensuring edit of rejected hostels auto-resets status to Pending for re-review.
+- **Resolution:** Added logic in `updateHostel` controller: if `status === 'Rejected'`, auto-set to `'Pending'` and clear `rejectionReason`.
+- **Lessons Learned:** Ownership scoping at the query level (`{ manager: req.user._id }`) is more secure than route-level middleware since it prevents any parameter tampering.
+
+## Folder Structure Changes
+```text
+backend/
+├── controllers/
+│   └── managerController.js (NEW)
+├── routes/
+│   └── managerRoutes.js (NEW)
+├── models/
+│   └── Hostel.js (MODIFIED — 4 new fields)
+├── server.js (MODIFIED — mounted /api/manager)
+└── utils/
+    └── testManagerApi.js (NEW)
+
+frontend/src/
+├── components/
+│   ├── ConfirmDialog.jsx (NEW)
+│   ├── FacilitySelector.jsx (NEW)
+│   ├── HostelCard.jsx (NEW)
+│   ├── HostelForm.jsx (NEW)
+│   ├── ManagerNavbar.jsx (NEW)
+│   ├── ManagerSidebar.jsx (NEW)
+│   └── Toast.jsx (NEW)
+├── layouts/
+│   └── ManagerLayout.jsx (NEW)
+├── pages/
+│   └── manager/
+│       ├── AddHostelPage.jsx (NEW)
+│       ├── EditHostelPage.jsx (NEW)
+│       ├── HostelDetailPage.jsx (NEW)
+│       ├── ManagerDashboardPage.jsx (NEW)
+│       ├── ManagerLoginPage.jsx (NEW)
+│       └── MyHostelsPage.jsx (NEW)
+├── services/
+│   └── managerService.js (NEW)
+├── App.jsx (MODIFIED — added manager routes)
+└── index.css (MODIFIED — added animations)
+```
+
+## Git Commit
+`feat(manager-module): implement Hostel Manager CRUD, dashboard, and frontend portal with ownership-scoped APIs`
+
+## Next Sprint
+Phase 7: Student Booking & Room Allocation System (Student Portal, Hostel Browsing, Room Booking Requests, Status Tracking).

@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+
+// Prevent querySrv ECONNREFUSED issues on local ISP DNS
+dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
 
 const connectDB = async () => {
   try {
-    // Attempt to connect to the database using the hidden URI
     const conn = await mongoose.connect(process.env.MONGO_URI);
-    
     console.log(`MongoDB Connected successfully: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`MongoDB Connection Error: ${error.message}`);
-    // Exit the process with a failure code (1) if connection fails
+    console.error('MongoDB Connection Error:', error.message || error);
     process.exit(1);
   }
 };

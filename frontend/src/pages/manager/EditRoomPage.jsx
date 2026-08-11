@@ -143,17 +143,57 @@ export const EditRoomPage = () => {
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300">Floor <span className="text-rose-500">*</span></label>
-            <input type="text" name="floor" value={formData.floor} onChange={handleChange} required className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all" />
+            <select name="floor" value={formData.floor} onChange={handleChange} required className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+              <option value="" disabled>Select Floor</option>
+              <option value="Basement">Basement</option>
+              <option value="Ground Floor">Ground Floor</option>
+              <option value="1st Floor">1st Floor</option>
+              <option value="2nd Floor">2nd Floor</option>
+              <option value="3rd Floor">3rd Floor</option>
+              <option value="4th Floor">4th Floor</option>
+              <option value="5th Floor">5th Floor</option>
+              <option value="6th Floor">6th Floor</option>
+            </select>
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300">Total Capacity (Beds) <span className="text-rose-500">*</span></label>
-            <input type="number" name="capacity" min="1" value={formData.capacity} onChange={handleChange} required className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all" />
+            <div className="flex flex-wrap gap-3">
+              {[1, 2, 3, 4, 5, 6].map(num => (
+                <button
+                  type="button"
+                  key={num}
+                  onClick={() => setFormData(prev => ({ ...prev, capacity: num, occupiedBeds: Math.min(prev.occupiedBeds, num) }))}
+                  className={`w-11 h-11 rounded-xl font-bold transition-all border ${
+                    formData.capacity === num
+                      ? 'bg-indigo-500 text-white border-indigo-500 shadow-lg shadow-indigo-500/25'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-600 hover:text-white'
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300">Occupied Beds <span className="text-rose-500">*</span></label>
-            <input type="number" name="occupiedBeds" min="0" max={formData.capacity} value={formData.occupiedBeds} onChange={handleChange} required className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all" />
+            <div className="flex flex-wrap gap-3">
+              {Array.from({ length: formData.capacity + 1 }, (_, i) => i).map(num => (
+                <button
+                  type="button"
+                  key={num}
+                  onClick={() => setFormData(prev => ({ ...prev, occupiedBeds: num }))}
+                  className={`w-11 h-11 rounded-xl font-bold transition-all border ${
+                    formData.occupiedBeds === num
+                      ? 'bg-cyan-500 text-white border-cyan-500 shadow-lg shadow-cyan-500/25'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-600 hover:text-white'
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -182,36 +222,30 @@ export const EditRoomPage = () => {
 
         <div className="pt-4 border-t border-slate-800">
           <h3 className="text-sm font-semibold text-slate-300 mb-4">Room Amenities</h3>
-          <div className="flex flex-wrap gap-6">
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className="relative flex items-center justify-center">
-                <input type="checkbox" name="AC" checked={formData.AC} onChange={handleChange} className="sr-only" />
-                <div className={`w-5 h-5 rounded border ${formData.AC ? 'bg-indigo-500 border-indigo-500' : 'bg-slate-950 border-slate-700'} transition-colors flex items-center justify-center`}>
-                  {formData.AC && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { name: 'AC', label: 'Air Conditioned' },
+              { name: 'attachedBathroom', label: 'Attached Bathroom' },
+              { name: 'furnished', label: 'Fully Furnished' }
+            ].map(amenity => (
+              <button
+                type="button"
+                key={amenity.name}
+                onClick={() => setFormData(prev => ({ ...prev, [amenity.name]: !prev[amenity.name] }))}
+                className={`p-4 rounded-xl flex items-center justify-between transition-all border ${
+                  formData[amenity.name]
+                    ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300 shadow-inner'
+                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'
+                }`}
+              >
+                <span className="text-sm font-semibold">{amenity.label}</span>
+                <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
+                  formData[amenity.name] ? 'bg-indigo-500 border-indigo-500' : 'bg-slate-800 border-slate-700'
+                }`}>
+                  {formData[amenity.name] && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
                 </div>
-              </div>
-              <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Air Conditioned</span>
-            </label>
-
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className="relative flex items-center justify-center">
-                <input type="checkbox" name="attachedBathroom" checked={formData.attachedBathroom} onChange={handleChange} className="sr-only" />
-                <div className={`w-5 h-5 rounded border ${formData.attachedBathroom ? 'bg-indigo-500 border-indigo-500' : 'bg-slate-950 border-slate-700'} transition-colors flex items-center justify-center`}>
-                  {formData.attachedBathroom && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
-                </div>
-              </div>
-              <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Attached Bathroom</span>
-            </label>
-
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className="relative flex items-center justify-center">
-                <input type="checkbox" name="furnished" checked={formData.furnished} onChange={handleChange} className="sr-only" />
-                <div className={`w-5 h-5 rounded border ${formData.furnished ? 'bg-indigo-500 border-indigo-500' : 'bg-slate-950 border-slate-700'} transition-colors flex items-center justify-center`}>
-                  {formData.furnished && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
-                </div>
-              </div>
-              <span className="text-sm text-slate-300 group-hover:text-white transition-colors">Fully Furnished</span>
-            </label>
+              </button>
+            ))}
           </div>
         </div>
 

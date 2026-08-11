@@ -85,11 +85,6 @@ const createRoom = async (req, res) => {
 
     const room = await Room.create(roomData);
 
-    // Update hostel's totalRooms and totalBeds counters
-    hostel.totalRooms += 1;
-    hostel.totalBeds += room.capacity;
-    await hostel.save();
-
     res.status(201).json({
       success: true,
       message: `Room ${room.roomNumber} created successfully`,
@@ -109,6 +104,65 @@ const createRoom = async (req, res) => {
     if (error.message && error.message.includes('cannot exceed capacity')) {
         return res.status(400).json({ success: false, message: error.message });
     }
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Create multiple rooms at once for a hostel
+// @route   POST /api/manager/hostels/:hostelId/rooms/bulk
+// @access  Private (Hostel Manager Only)
+const createMultipleRooms = async (req, res) => {
+  try {
+    const { hostelId } = req.params;
+    const { roomNumbers, ...sharedData } = req.body;
+
+    // Verify ownership
+    const hostel = await checkHostelOwnership(hostelId, req.user._id);
+    if (!hostel) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have permission to add rooms to this hostel',
+      });
+    }
+
+    if (!Array.isArray(roomNumbers) || roomNumbers.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide an array of room numbers',
+      });
+    }
+
+    const createdRooms = [];
+    const failedRooms = [];
+    let addedCapacity = 0;
+
+    for (const roomNumber of roomNumbers) {
+      try {
+        const room = await Room.create({
+          ...sharedData,
+          roomNumber: roomNumber.trim(),
+          hostel: hostelId,
+        });
+        createdRooms.push(room.roomNumber);
+        addedCapacity += room.capacity;
+      } catch (err) {
+        let errorMsg = err.message;
+        if (err.code === 11000) errorMsg = 'Room number already exists';
+        failedRooms.push({ roomNumber, error: errorMsg });
+      }
+    }
+
+    if (createdRooms.length > 0) {
+      // Intentionally not auto-incrementing totalRooms/totalBeds, since they represent the max capacity in Hostel model.
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `Successfully created ${createdRooms.length} rooms. Failed: ${failedRooms.length}`,
+      createdRooms,
+      failedRooms,
+    });
+  } catch (error) {
     res.status(500).json({ success: false, message: 'Server Error', error: error.message });
   }
 };
@@ -202,10 +256,7 @@ const deleteRoom = async (req, res) => {
       });
     }
     
-    // Decrease the hostel's totalRooms and totalBeds counters before deleting
-    hostel.totalRooms = Math.max(0, hostel.totalRooms - 1);
-    hostel.totalBeds = Math.max(0, hostel.totalBeds - room.capacity);
-    await hostel.save();
+    // Intentionally not auto-decrementing totalRooms/totalBeds, since they represent the max capacity in Hostel model.
 
     const roomNumber = room.roomNumber;
     await Room.deleteOne({ _id: room._id });
@@ -223,6 +274,7 @@ module.exports = {
   getRoomsByHostel,
   getRoomById,
   createRoom,
+  createMultipleRooms,
   updateRoom,
   deleteRoom,
 };

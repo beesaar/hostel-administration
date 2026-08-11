@@ -120,11 +120,17 @@ export const RoomsListPage = () => {
           <Button variant="outline" size="sm" icon={RefreshCw} onClick={fetchData}>
             Refresh
           </Button>
-          <Link to={`/manager/hostels/${hostelId}/rooms/new`}>
-            <Button variant="primary" size="sm" icon={PlusCircle}>
-              Add Room
+          {hostel && rooms.length >= hostel.totalRooms ? (
+            <Button variant="primary" size="sm" icon={PlusCircle} disabled className="opacity-50 cursor-not-allowed">
+              Add Room (Max Reached)
             </Button>
-          </Link>
+          ) : (
+            <Link to={`/manager/hostels/${hostelId}/rooms/new`}>
+              <Button variant="primary" size="sm" icon={PlusCircle}>
+                Add Room
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 

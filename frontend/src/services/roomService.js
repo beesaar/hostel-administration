@@ -19,6 +19,12 @@ export const roomService = {
     return response.data;
   },
 
+  // Bulk create rooms
+  bulkCreateRooms: async (hostelId, payload) => {
+    const response = await api.post(`/manager/hostels/${hostelId}/rooms/bulk`, payload);
+    return response.data;
+  },
+
   // Update a room
   updateRoom: async (roomId, roomData) => {
     const response = await api.put(`/manager/rooms/${roomId}`, roomData);

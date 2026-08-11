@@ -288,6 +288,19 @@ export const HostelDetailPage = () => {
               </div>
             </div>
           </div>
+
+          {/* Room Management */}
+          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
+            <h3 className="text-sm font-bold text-white">Room Management</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Manage individual rooms, configure bed capacity, and track occupancy for this property.
+            </p>
+            <Link to={`/manager/hostels/${hostel._id}/rooms`} className="block">
+              <Button variant="primary" className="w-full flex justify-center" icon={DoorOpen}>
+                Manage Rooms
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 

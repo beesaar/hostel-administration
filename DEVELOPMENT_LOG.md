@@ -7,7 +7,7 @@
 ## 📊 Project Progress Tracker
 
 ```text
-Progress: [█████████████████████████████████░░░░░░░░░░░░░] 66% Completed (6 / 9 Phases)
+Progress: [██████████████████████████████████████░░░░░░░░░] 77% Completed (7 / 9 Phases)
 ```
 
 | Phase # | Module / Feature Name | Status | Completion Date |
@@ -18,9 +18,9 @@ Progress: [███████████████████████
 | **Phase 4** | Admin Backend Module (Moderation & Analytics) | ✅ **Completed** | Aug 6, 2026 |
 | **Phase 5** | Admin Frontend Portal & UI Integration | ✅ **Completed** | Aug 6, 2026 |
 | **Phase 6** | Hostel Manager Module (CRUD, Dashboard & Frontend) | ✅ **Completed** | Aug 6, 2026 |
-| **Phase 7** | Student Booking & Room Allocation System | ⏳ *Next Sprint* | Pending |
-| **Phase 8** | Interactive Map (React Leaflet & OpenStreetMap) | ⏳ *Upcoming* | Pending |
-| **Phase 9** | Complaints, Notices & Image Uploads (Multer) | ⏳ *Upcoming* | Pending |
+| **Phase 7** | Room Management Module | ✅ **Completed** | Aug 11, 2026 |
+| **Phase 8** | Student Booking & Allocation System | ⏳ *Next Sprint* | Pending |
+| **Phase 9** | Complaints, Map, Notices & Image Uploads | ⏳ *Upcoming* | Pending |
 
 ---
 
@@ -508,3 +508,89 @@ frontend/src/
 
 ## Next Sprint
 Phase 7: Student Booking & Room Allocation System (Student Portal, Hostel Browsing, Room Booking Requests, Status Tracking).
+
+---
+
+# Sprint 3 — Room Management
+
+## Goal
+Implement a robust Room Management system allowing Hostel Managers to manage individual rooms within their hostels. The goal is to enforce strict ownership verification (Room → Hostel → Manager) to ensure security, whilst automating room availability calculation via database middleware.
+
+## Database Changes
+- Created `Room` collection.
+- Added compound unique index on `{ hostel: 1, roomNumber: 1 }` to prevent duplicate rooms per hostel.
+- Implemented `pre('save')` Mongoose hook on the `Room` schema to automatically calculate `availableBeds` and dynamically transition `status` between 'Available', 'Partially Occupied', and 'Full' based on real-time occupancy limits. Maintenance status lock was also implemented.
+
+## Backend Changes
+- Added `roomController.js` containing secure CRUD operations for rooms.
+- Added `roomRoutes.js` and mounted them at `/api/manager`.
+- Integrated automated capacity validations preventing over-occupancy.
+
+## Frontend Changes
+- Modified `App.jsx` to mount new manager room routes.
+- Modified `HostelDetailPage.jsx` to include a "Manage Rooms" shortcut panel under capacity metrics.
+- Added `roomService.js` to handle API interactions using the existing configured Axios instance.
+- Built `RoomsListPage.jsx` providing a comprehensive dashboard to view and manage hostel rooms with intuitive status color coding.
+- Built `AddRoomPage.jsx` and `EditRoomPage.jsx` featuring dynamic form validation and Tailwind UI aligned with the current dashboard themes.
+
+## API Endpoints
+- `GET /api/manager/hostels/:hostelId/rooms` - Retrieve rooms for a hostel
+- `GET /api/manager/rooms/:roomId` - Retrieve specific room
+- `POST /api/manager/hostels/:hostelId/rooms` - Create a new room
+- `PUT /api/manager/rooms/:roomId` - Update an existing room
+- `DELETE /api/manager/rooms/:roomId` - Delete a room
+
+## Room-Hostel-Manager Relationship
+Strict hierarchy enforcement logic was applied in all backend routes. A manager acting on a room first triggers a database query resolving the Room -> Hostel. The query then validates if `Hostel.manager === req.user._id`. Without this exact match, the API rejects modifications with 403 Forbidden.
+
+## Validation Rules
+- Capacity must be > 0.
+- Occupied beds cannot be negative.
+- Occupied beds cannot exceed capacity.
+- Monthly rent cannot be negative.
+- Duplicate room numbers within the same hostel throw 400 Bad Request.
+
+## Availability Logic
+Availability and status transitions were moved to the database layer (Mongoose `pre-save`) to act as a single source of truth. 
+- Available Beds = Capacity - Occupied Beds.
+- Auto status setting maps `0` to 'Available', `capacity` to 'Full', and everything in between to 'Partially Occupied'.
+- Managers can explicitly set 'Maintenance' to lock a room out of the automatic transition cycle.
+
+## Files Created
+- `backend/models/Room.js`
+- `backend/controllers/roomController.js`
+- `backend/routes/roomRoutes.js`
+- `backend/utils/testRoomApi.js`
+- `frontend/src/services/roomService.js`
+- `frontend/src/pages/manager/RoomsListPage.jsx`
+- `frontend/src/pages/manager/AddRoomPage.jsx`
+- `frontend/src/pages/manager/EditRoomPage.jsx`
+
+## Files Modified
+- `backend/server.js` (mounted roomRoutes)
+- `frontend/src/App.jsx` (added Room Management routes)
+- `frontend/src/pages/manager/HostelDetailPage.jsx` (added "Manage Rooms" section)
+
+## Testing
+- Integration test suite (`testRoomApi.js`) was written and passed 13/14 assertions initially, exposing a bug in the 500 error catch behavior during validation, which was subsequently fixed to return robust 400 Bad Requests.
+- Frontend flows (List -> Create -> Edit -> Delete) manually structured against APIs.
+
+## Bugs Encountered
+- **Bug**: `pre('save')` Mongoose hook throwing standard `Error` crashed the catch block in `createRoom`, returning a 500 status rather than a 400 Bad Request to the user.
+
+## Bugs Fixed
+- Intercepted the custom capacity exceedance error inside `roomController.js` and explicitly formatted it as a 400 Bad Request for proper frontend consumption.
+- Fixed `next is not a function` error in Mongoose pre-save hooks by converting standard ES5 callbacks to direct error throws for Mongoose v6+ synchronous behavior.
+
+## Lessons Learned
+- Handling calculated fields strictly inside the Database (via Hooks) prevents data mismatch issues between the controller and the frontend, keeping the application state pristine and secure.
+
+## Git Commit Suggestions
+- `feat(room): add room model and APIs`
+- `feat(room): add room management UI`
+- `feat(room): integrate room APIs`
+- `fix(room): validate room occupancy`
+- `docs: update development log`
+
+## Next Sprint
+Student Booking & Room Allocation System

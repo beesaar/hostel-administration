@@ -23,6 +23,10 @@ import AddHostelPage from './pages/manager/AddHostelPage';
 import EditHostelPage from './pages/manager/EditHostelPage';
 import HostelDetailPage from './pages/manager/HostelDetailPage';
 
+import RoomsListPage from './pages/manager/RoomsListPage';
+import AddRoomPage from './pages/manager/AddRoomPage';
+import EditRoomPage from './pages/manager/EditRoomPage';
+
 // Root redirector based on authentication state and role
 const RootRedirect = () => {
   const { isAuthenticated, user, loading } = useAuth();
@@ -75,6 +79,9 @@ function App() {
               <Route path="hostels/new" element={<AddHostelPage />} />
               <Route path="hostels/:id" element={<HostelDetailPage />} />
               <Route path="hostels/:id/edit" element={<EditHostelPage />} />
+              <Route path="hostels/:hostelId/rooms" element={<RoomsListPage />} />
+              <Route path="hostels/:hostelId/rooms/new" element={<AddRoomPage />} />
+              <Route path="rooms/:roomId/edit" element={<EditRoomPage />} />
             </Route>
           </Route>
 

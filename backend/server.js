@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/manager', require('./routes/managerRoutes'));
+app.use('/api/manager', require('./routes/roomRoutes'));
 
 // 7. Define Server Port & Start Server
 const PORT = process.env.PORT || 5000;

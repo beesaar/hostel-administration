@@ -1,0 +1,285 @@
+\chapter{Implementation}
+
+The implementation phase converts the design of the Hostel Administration System into a functional, full-stack web application. The system is implemented using a component-based React frontend architecture communicating with a robust Node.js and Express backend, backed by a MongoDB database. The implementation focuses on establishing the core functionality required for secure user authentication, protected navigation, role-based dashboard access, and hostel room and student management.
+
+The frontend is developed using React and Vite, with Tailwind CSS used for styling. JSON Web Tokens (JWT) and Express middleware provide user authentication and authorisation services, while MongoDB is used for structured storage of administrative records. React Router is used to manage navigation between different pages and to restrict access to authenticated resources.
+
+\section{Development Environment}
+
+The Hostel Administration System is developed using a modern JavaScript-based development environment (MERN stack). The frontend is created using React with Vite as the development and build tool, while the backend API is powered by Node.js.
+
+The major technologies used during implementation are:
+
+\begin{itemize}
+    \item \textbf{React:} Used to develop the component-based frontend interface.
+    \item \textbf{Vite:} Used as the fast frontend development and build environment.
+    \item \textbf{Tailwind CSS:} Used for styling the user interface with utility classes.
+    \item \textbf{React Router:} Used for client-side routing and protected navigation.
+    \item \textbf{Node.js \& Express.js:} Used to build the RESTful backend API and handle business logic.
+    \item \textbf{MongoDB \& Mongoose:} Used for scalable, document-based storage of hostel data.
+    \item \textbf{JSON Web Tokens (JWT) \& bcrypt:} Used for secure password hashing and stateless session management.
+    \item \textbf{Git and GitHub:} Used for version control and source-code management.
+\end{itemize}
+
+\section{Frontend Implementation}
+
+The frontend of the system is implemented using React. The application is divided into pages and reusable components to improve maintainability and separation of responsibilities.
+
+The major pages implemented in the frontend include:
+
+\begin{itemize}
+    \item Home / Landing Page
+    \item Login and Registration
+    \item Dashboard (Role-specific)
+    \item Add Room Page
+    \item Edit Room Page
+    \item Rooms List Page
+\end{itemize}
+
+Reusable components such as the navigation bar, sidebar, layouts, and protected route wrappers are used across the application. This structure allows common functionality and interface elements to be maintained independently from individual pages.
+
+A simplified representation of the frontend project structure is shown below.
+
+\begin{verbatim}
+frontend/src/
+|
++-- components/
+|    +-- Layout.jsx
+|    +-- Navbar.jsx
+|    +-- Sidebar.jsx
+|    +-- ProtectedRoute.jsx
+|
++-- context/
+|    +-- AuthContext.jsx
+|
++-- pages/
+|    +-- Home.jsx
+|    +-- Login.jsx
+|    +-- manager/
+|         +-- Dashboard.jsx
+|         +-- AddRoomPage.jsx
+|         +-- EditRoomPage.jsx
+|         +-- RoomsListPage.jsx
+|
++-- services/
+|    +-- api.js
+|    +-- roomService.js
+|    +-- authService.js
+|
++-- App.jsx
++-- main.jsx
+\end{verbatim}
+
+This modular organisation separates user interface components, administrative pages, authentication logic, and API service calls.
+
+\section{Application Routing}
+
+React Router is used to provide navigation between the different pages of the system. Routes are defined for the public pages as well as authenticated, role-specific resources.
+
+The major routes implemented in the application are shown in Table~\ref{tab:routes}.
+
+\begin{table}[H]
+\centering
+\caption{Frontend Application Routes}
+\label{tab:routes}
+\begin{tabular}{p{0.35\textwidth} p{0.45\textwidth}}
+\toprule
+\textbf{Route} & \textbf{Purpose} \\
+\midrule
+/ & Home page \\
+/login & User login \\
+/manager/dashboard & Authenticated dashboard for managers \\
+/manager/rooms & View all rooms \\
+/manager/rooms/new & Add a new room \\
+/manager/rooms/edit/:id & Edit an existing room \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The dashboard and management routes are protected using a \texttt{ProtectedRoute} component. This prevents users who are not authenticated, or who lack the appropriate role permissions, from directly accessing administrative resources.
+
+\section{Backend API and Database Integration}
+
+Unlike serverless approaches, the Hostel Administration System utilises a dedicated Express.js backend. The server is initialised and connects to the MongoDB database using Mongoose.
+
+The backend is structured using the Model-View-Controller (MVC) pattern (adapted for an API-first approach without views).
+
+\begin{verbatim}
+backend/
+|
++-- config/
+|    +-- db.js (MongoDB connection)
+|
++-- controllers/
+|    +-- authController.js
+|    +-- roomController.js
+|
++-- middleware/
+|    +-- authMiddleware.js (JWT verification)
+|
++-- models/
+|    +-- User.js
+|    +-- Room.js
+|
++-- routes/
+|    +-- authRoutes.js
+|    +-- roomRoutes.js
+|
++-- server.js
+\end{verbatim}
+
+The controller modules handle business logic, such as validating room data before saving it, while routes map HTTP requests (GET, POST, PUT, DELETE) to specific controller functions.
+
+\section{User Authentication}
+
+Custom authentication is implemented using JSON Web Tokens (JWT) and bcrypt for password hashing.
+
+The authentication service provides endpoints for registering a new account and authenticating an existing user. On the frontend, the authentication state is made available to React components through an authentication context.
+
+The authentication process can be summarised as follows:
+
+\begin{enumerate}
+    \item The user enters their credentials on the login page.
+    \item The frontend submits a POST request with the credentials to the backend API (\texttt{/api/auth/login}).
+    \item The backend retrieves the user from MongoDB and verifies the password hash using bcrypt.
+    \item Upon successful verification, the backend generates a signed JWT containing the user's ID and role, and returns it to the client.
+    \item The frontend stores the JWT (e.g., in local storage or memory) and updates the authentication context.
+    \item The authentication context makes the current user available globally.
+    \item Protected routes become accessible, and subsequent API requests include the JWT in the \texttt{Authorization} header.
+\end{enumerate}
+
+\section{Protected Routes and Middleware}
+
+Protected navigation is implemented on both the frontend and the backend.
+
+On the frontend, the \texttt{ProtectedRoute} component checks the current authentication context. If a user attempts to access an administrative page without a valid token, they are redirected to the login page.
+
+On the backend, an \texttt{authMiddleware} function intercepts incoming requests to protected API endpoints. It extracts the JWT from the request header, verifies its signature, and checks if the decoded user has the required role (e.g., ensuring only a 'manager' or 'admin' can create a new room). If the token is invalid or missing, the backend returns a \texttt{401 Unauthorized} response.
+
+\section{Dashboard Implementation}
+
+The dashboard provides the primary administrative interface. It uses the authentication context to display a personalised welcome message based on the logged-in user.
+
+The dashboard makes API calls to aggregate data, displaying quick statistics such as total rooms, current occupancy rates, and recent student allocations.
+
+The dashboard also provides a secure logout operation. The logout operation clears the JWT from the frontend storage and updates the authentication context, effectively terminating the session before redirecting the user to the login page.
+
+\section{Room Management Implementation}
+
+Room management represents a central functionality of the Hostel Administration System, enabling managers to oversee accommodation capacity.
+
+The Add Room page (\texttt{AddRoomPage.jsx}) provides a form through which the manager can enter room details. The form contains the following fields:
+
+\begin{itemize}
+    \item Room Number
+    \item Block Name
+    \item Capacity
+    \item Facilities
+\end{itemize}
+
+React's \texttt{useState} hook is used to maintain the values entered into the form. Each input field is associated with a corresponding state variable, allowing the interface to reflect changes made by the user in real time.
+
+When editing a room, the \texttt{useEffect} hook is utilised to fetch the existing room data from the backend API based on the room ID in the URL, populating the form fields for modification.
+
+\section{MongoDB Implementation}
+
+MongoDB is used to persist all administrative data, guided by Mongoose schemas.
+
+Room records are organised in the \texttt{Rooms} collection. The Mongoose schema enforces data validation at the database level, ensuring that required fields like \texttt{roomNumber} and \texttt{capacity} are present.
+
+The API creation operation creates a new document inside the database. A simplified representation of the data flow for creating a room is shown below:
+
+\begin{verbatim}
+Client (React Form)
+        |
+        v POST /api/rooms (with JWT)
+Express Route (roomRoutes.js)
+        |
+        v authMiddleware (Verifies JWT)
+Controller (roomController.js)
+        |
+        v new Room(data)
+Mongoose Model
+        |
+        v
+MongoDB (Stores Document)
+\end{verbatim}
+
+This structure ensures that data is validated, securely authorised, and persistently stored.
+
+\section{Form Submission and API Communication}
+
+When the user submits the Add Room form, the default browser submission behaviour is prevented using React's event handling mechanism (\texttt{e.preventDefault()}). The application then collects the values maintained by the form state.
+
+The application data is passed to an asynchronous API service function (e.g., using \texttt{axios} or \texttt{fetch}), which includes the authentication token in the request headers.
+
+If the backend operation succeeds, a confirmation message is displayed (using a toast notification or alert), and the user is redirected to the Rooms List page. If the operation fails, the error message returned by the backend is displayed to the user.
+
+The submission process can therefore be represented as:
+
+\begin{enumerate}
+    \item User enters room information.
+    \item User submits the form.
+    \item Form submission is intercepted by the React event handler.
+    \item The API service constructs an HTTP POST request.
+    \item The backend validates the data and saves it to MongoDB.
+    \item A success or failure HTTP response is returned to the client.
+    \item The frontend updates the UI based on the response status.
+\end{enumerate}
+
+\section{Error Handling}
+
+Robust error handling is implemented across the full stack. Asynchronous frontend API calls are handled using \texttt{async} and \texttt{await}, with errors captured using \texttt{try-catch} blocks. 
+
+On the backend, Express controller functions use similar \texttt{try-catch} blocks. If a database query fails (e.g., attempting to create a room with a duplicate room number), the backend catches the error and sends a formatted JSON error response with an appropriate HTTP status code (e.g., \texttt{400 Bad Request} or \texttt{500 Internal Server Error}).
+
+This approach prevents unexpected crashes and ensures that users receive clear, actionable feedback when an operation fails.
+
+\section{Security Implementation}
+
+Security is implemented through a combination of frontend routing checks and rigorous backend validation.
+
+Authentication ensures that users have an identifiable account. Passwords are never stored in plain text; they are hashed using bcrypt before being saved to MongoDB.
+
+Stateless JWTs prevent session hijacking and allow the API to verify the identity and role of the requester on every protected route. Middleware ensures that even if a user bypasses the frontend \texttt{ProtectedRoute}, they cannot perform unauthorised actions on the backend.
+
+The combination of these mechanisms provides a strong, modern security model suitable for protecting sensitive hostel administrative data.
+
+\section{Testing of Implemented Features}
+
+Testing was carried out during development to verify the core functionality of the application across both the frontend and backend. The major functional test cases are shown in Table~\ref{tab:testcases}.
+
+\begin{table}[H]
+\centering
+\caption{Functional Test Cases}
+\label{tab:testcases}
+\begin{tabular}{p{0.28\textwidth} p{0.42\textwidth} p{0.12\textwidth}}
+\toprule
+\textbf{Test Case} & \textbf{Expected Result} & \textbf{Status} \\
+\midrule
+User registration & Password is hashed, account is saved in DB. & Pass \\
+Valid login & JWT is issued; user can access the dashboard. & Pass \\
+Invalid login & API returns 401; error is displayed on UI. & Pass \\
+Protected route access & Unauthenticated API requests are rejected. & Pass \\
+Logout & JWT is cleared from client state. & Pass \\
+Open Add Room form & Form is rendered correctly for managers. & Pass \\
+Room submission & Room data is validated and stored in MongoDB. & Pass \\
+Duplicate room entry & Backend rejects duplicate room numbers. & Pass \\
+View rooms list & Frontend fetches and displays all rooms from DB. & Pass \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Testing during development helped identify issues such as CORS (Cross-Origin Resource Sharing) blocks between the frontend and backend, which were resolved by configuring the Express CORS middleware.
+
+\section{Implementation Status}
+
+The current implementation successfully establishes the core infrastructure of the Hostel Administration System. User authentication, protected navigation, dashboard access, and the foundational CRUD (Create, Read, Update, Delete) operations for Room management have been implemented.
+
+The architecture is designed to be highly extensible. The established patterns for API routes, controllers, and React components can be easily replicated to support additional modules, such as student registration, room allocation logic, and fee tracking.
+
+\section{Summary}
+
+This chapter described the implementation of the Hostel Administration System. The system was built as a full-stack MERN application. The frontend was implemented using React, Vite, and Tailwind CSS, with React Router managing navigation. The backend API was developed using Node.js and Express, implementing JWT for secure authentication. MongoDB and Mongoose provided structured, schema-driven cloud storage for administrative records.
+
+The implementation establishes the core functionality required for an administrator or manager to securely log in and manage hostel accommodation spaces. The modular organisation of the frontend components and backend controllers provides a robust foundation for continuously extending the system with advanced management and analytics features.

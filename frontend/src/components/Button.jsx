@@ -14,7 +14,7 @@ export const Button = ({
   ...props
 }) => {
   const baseClasses =
-    'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
+    'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-rose-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
 
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-xs gap-1.5',
@@ -24,15 +24,15 @@ export const Button = ({
 
   const variantClasses = {
     primary:
-      'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 focus:ring-indigo-500 border border-indigo-500/30 active:scale-[0.98]',
+      'bg-teal-600 hover:bg-teal-500 text-slate-800 shadow-lg shadow-teal-600/25 focus:ring-teal-500 border border-teal-500/30 active:scale-[0.98]',
     success:
-      'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 focus:ring-emerald-500 border border-emerald-500/30 active:scale-[0.98]',
+      'bg-emerald-600 hover:bg-emerald-500 text-slate-800 shadow-lg shadow-emerald-600/25 focus:ring-emerald-500 border border-emerald-500/30 active:scale-[0.98]',
     danger:
-      'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 focus:ring-rose-500 border border-rose-500/30 active:scale-[0.98]',
+      'bg-rose-600 hover:bg-rose-500 text-slate-800 shadow-lg shadow-rose-600/25 focus:ring-rose-500 border border-rose-500/30 active:scale-[0.98]',
     outline:
-      'bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 border border-slate-700 hover:border-slate-600 focus:ring-slate-500 active:scale-[0.98]',
+      'bg-white/80 hover:bg-rose-100/80 text-slate-700 border border-rose-100 hover:border-rose-200 focus:ring-rose-300 active:scale-[0.98]',
     ghost:
-      'bg-transparent hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 focus:ring-slate-600',
+      'bg-transparent hover:bg-white/60 text-slate-400 hover:text-slate-700 focus:ring-rose-200',
   };
 
   return (

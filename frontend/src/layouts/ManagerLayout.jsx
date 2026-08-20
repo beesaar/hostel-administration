@@ -7,7 +7,7 @@ export const ManagerLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex">
+    <div className="min-h-screen bg-rose-50 text-slate-800 flex">
       {/* Sidebar Navigation */}
       <ManagerSidebar
         isOpen={isSidebarOpen}

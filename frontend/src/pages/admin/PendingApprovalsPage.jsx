@@ -107,7 +107,7 @@ export const PendingApprovalsPage = () => {
       {/* Page Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
               <Clock className="w-6 h-6 animate-pulse" />
             </div>
@@ -152,21 +152,21 @@ export const PendingApprovalsPage = () => {
           {pendingHostels.map((hostel) => (
             <div
               key={hostel._id}
-              className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6 hover:border-slate-700 transition-colors"
+              className="bg-rose-50/90 border border-white rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6 hover:border-rose-100 transition-colors"
             >
               {/* Header: Title, Type, Status */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white pb-5">
                 <div>
                   <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-bold text-white tracking-tight">
+                    <h3 className="text-xl font-bold text-slate-800 tracking-tight">
                       {hostel.name}
                     </h3>
-                    <span className="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    <span className="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-teal-500/20 text-teal-600 border border-teal-500/30">
                       {hostel.type} Hostel
                     </span>
                   </div>
                   <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+                    <MapPin className="w-3.5 h-3.5 text-teal-400" />
                     <span>
                       {hostel.address}, {hostel.city}, {hostel.state} - {hostel.pincode}
                     </span>
@@ -183,10 +183,10 @@ export const PendingApprovalsPage = () => {
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                     Property Info
                   </span>
-                  <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                  <p className="text-xs text-slate-600 leading-relaxed bg-rose-50/60 p-3.5 rounded-xl border border-white/80">
                     {hostel.description || 'No description provided.'}
                   </p>
-                  <div className="flex items-center gap-2 text-xs text-slate-300">
+                  <div className="flex items-center gap-2 text-xs text-slate-600">
                     <BedDouble className="w-4 h-4 text-emerald-400" />
                     <span>
                       Capacity: <strong>{hostel.totalRooms}</strong> Rooms (
@@ -200,17 +200,17 @@ export const PendingApprovalsPage = () => {
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                     Manager In-Charge
                   </span>
-                  <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80 space-y-2 text-xs">
-                    <p className="font-semibold text-white flex items-center gap-2">
+                  <div className="bg-rose-50/60 p-3.5 rounded-xl border border-white/80 space-y-2 text-xs">
+                    <p className="font-semibold text-slate-800 flex items-center gap-2">
                       <User className="w-3.5 h-3.5 text-cyan-400" />
                       <span>{hostel.manager?.name || 'Unassigned Manager'}</span>
                     </p>
                     <p className="text-slate-400 flex items-center gap-2">
-                      <Mail className="w-3.5 h-3.5 text-slate-500" />
+                      <Mail className="w-3.5 h-3.5 text-rose-300" />
                       <span>{hostel.manager?.email || hostel.contactEmail}</span>
                     </p>
                     <p className="text-slate-400 flex items-center gap-2">
-                      <Phone className="w-3.5 h-3.5 text-slate-500" />
+                      <Phone className="w-3.5 h-3.5 text-rose-300" />
                       <span>{hostel.manager?.phone || hostel.contactPhone}</span>
                     </p>
                   </div>
@@ -226,21 +226,21 @@ export const PendingApprovalsPage = () => {
                       hostel.amenities.map((amenity, idx) => (
                         <span
                           key={idx}
-                          className="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800/80 text-slate-300 border border-slate-700/80 flex items-center gap-1"
+                          className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/80 text-slate-600 border border-rose-100/80 flex items-center gap-1"
                         >
-                          <Tag className="w-3 h-3 text-indigo-400" />
+                          <Tag className="w-3 h-3 text-teal-400" />
                           <span>{amenity}</span>
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs text-slate-500">None listed</span>
+                      <span className="text-xs text-rose-300">None listed</span>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons: Approve & Reject */}
-              <div className="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-end gap-3">
+              <div className="pt-4 border-t border-white/80 flex flex-col sm:flex-row items-center justify-end gap-3">
                 <Button
                   variant="danger"
                   onClick={() => openRejectModal(hostel)}
@@ -264,11 +264,11 @@ export const PendingApprovalsPage = () => {
           ))}
         </div>
       ) : (
-        <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-12 text-center space-y-4">
+        <div className="bg-rose-50/80 border border-white rounded-3xl p-12 text-center space-y-4">
           <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
             <ShieldCheck className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-white">All Caught Up!</h3>
+          <h3 className="text-lg font-bold text-slate-800">All Caught Up!</h3>
           <p className="text-sm text-slate-400 max-w-md mx-auto">
             There are no pending hostel applications in the verification queue. All
             registered properties have been moderated.

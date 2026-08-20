@@ -25,25 +25,25 @@ export const ManagerSidebar = ({ isOpen, onClose }) => {
       {isOpen && (
         <div
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm lg:hidden transition-opacity"
+          className="fixed inset-0 z-40 bg-rose-50/80 backdrop-blur-sm lg:hidden transition-opacity"
         />
       )}
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-rose-50 border-r border-white flex flex-col justify-between transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Top Branding */}
         <div>
-          <div className="h-16 px-6 flex items-center justify-between border-b border-slate-800">
+          <div className="h-16 px-6 flex items-center justify-between border-b border-white">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center text-white shadow-lg shadow-cyan-600/30">
+              <div className="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center text-slate-800 shadow-lg shadow-teal-500/30">
                 <UserCheck className="w-5 h-5" />
               </div>
               <div>
-                <h1 className="text-base font-bold text-white tracking-tight leading-none">
+                <h1 className="text-base font-bold text-slate-800 tracking-tight leading-none">
                   Manager Portal
                 </h1>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-cyan-400">
@@ -53,7 +53,7 @@ export const ManagerSidebar = ({ isOpen, onClose }) => {
             </div>
             <button
               onClick={onClose}
-              className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-white"
             >
               <X className="w-5 h-5" />
             </button>
@@ -72,8 +72,8 @@ export const ManagerSidebar = ({ isOpen, onClose }) => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/25'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                        ? 'bg-cyan-600 text-slate-800 shadow-lg shadow-cyan-600/25'
+                        : 'text-slate-400 hover:text-slate-700 hover:bg-white/60'
                     }`
                   }
                 >
@@ -86,10 +86,10 @@ export const ManagerSidebar = ({ isOpen, onClose }) => {
         </div>
 
         {/* Bottom User Card & Logout */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950/40">
+        <div className="p-4 border-t border-white bg-rose-50/40">
           <div className="flex items-center justify-between mb-3 px-2">
             <div className="overflow-hidden pr-2">
-              <p className="text-sm font-semibold text-white truncate">
+              <p className="text-sm font-semibold text-slate-800 truncate">
                 {user?.name || 'Hostel Manager'}
               </p>
               <p className="text-xs text-slate-400 truncate">{user?.email}</p>

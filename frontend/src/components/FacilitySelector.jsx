@@ -52,7 +52,7 @@ export const FacilitySelector = ({ selected = [], onChange, label = 'Facilities'
 
   return (
     <div className="space-y-3">
-      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
         {label}
       </label>
 
@@ -62,13 +62,13 @@ export const FacilitySelector = ({ selected = [], onChange, label = 'Facilities'
           {selected.map((facility) => (
             <span
               key={facility}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-500/15 text-indigo-300 border border-indigo-500/30"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-teal-500/15 text-teal-600 border border-teal-500/30"
             >
               {facility}
               <button
                 type="button"
                 onClick={() => toggleFacility(facility)}
-                className="p-0.5 rounded hover:bg-indigo-500/30 transition-colors"
+                className="p-0.5 rounded hover:bg-teal-500/30 transition-colors"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -84,7 +84,7 @@ export const FacilitySelector = ({ selected = [], onChange, label = 'Facilities'
             key={facility}
             type="button"
             onClick={() => toggleFacility(facility)}
-            className="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800/80 text-slate-400 border border-slate-700/80 hover:bg-slate-700 hover:text-slate-200 transition-colors cursor-pointer"
+            className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/80 text-slate-400 border border-rose-100/80 hover:bg-rose-100 hover:text-slate-700 transition-colors cursor-pointer"
           >
             + {facility}
           </button>
@@ -99,13 +99,13 @@ export const FacilitySelector = ({ selected = [], onChange, label = 'Facilities'
           onChange={(e) => setCustomInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Add a custom facility..."
-          className="flex-1 px-3 py-2 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+          className="flex-1 px-3 py-2 bg-rose-50/70 border border-white rounded-xl text-xs text-slate-700 placeholder-rose-300 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-colors"
         />
         <button
           type="button"
           onClick={addCustomFacility}
           disabled={!customInput.trim()}
-          className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          className="p-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4" />
         </button>

@@ -24,7 +24,7 @@ export const StatusBadge = ({ status }) => {
         };
       case 'admin':
         return {
-          bg: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
+          bg: 'bg-teal-500/10 text-teal-600 border-teal-500/30',
           icon: <Shield className="w-3.5 h-3.5" />,
           label: 'Admin',
         };
@@ -42,7 +42,7 @@ export const StatusBadge = ({ status }) => {
         };
       default:
         return {
-          bg: 'bg-slate-800 text-slate-300 border-slate-700',
+          bg: 'bg-white text-slate-600 border-rose-100',
           icon: null,
           label: statusStr || 'Unknown',
         };

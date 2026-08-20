@@ -88,7 +88,7 @@ export const MyHostelsPage = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
               <Building2 className="w-6 h-6" />
             </div>
@@ -118,15 +118,15 @@ export const MyHostelsPage = () => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 p-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl w-fit">
+      <div className="flex items-center gap-2 p-1.5 bg-rose-50/90 border border-white rounded-2xl w-fit">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setStatusFilter(tab.value)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               statusFilter === tab.value
-                ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/20'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                ? 'bg-cyan-600 text-slate-800 shadow-md shadow-cyan-600/20'
+                : 'text-slate-400 hover:text-slate-700 hover:bg-white/60'
             }`}
           >
             {tab.label}
@@ -155,11 +155,11 @@ export const MyHostelsPage = () => {
           ))}
         </div>
       ) : (
-        <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-12 text-center space-y-4">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-800/60 text-slate-500 border border-slate-700/50 flex items-center justify-center">
+        <div className="bg-rose-50/80 border border-white rounded-3xl p-12 text-center space-y-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-white/60 text-rose-300 border border-rose-100/50 flex items-center justify-center">
             <Inbox className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-white">No Hostels Found</h3>
+          <h3 className="text-lg font-bold text-slate-800">No Hostels Found</h3>
           <p className="text-sm text-slate-400 max-w-md mx-auto">
             {statusFilter
               ? `You have no hostels with "${statusFilter}" status.`

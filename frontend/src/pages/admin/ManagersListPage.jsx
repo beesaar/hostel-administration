@@ -52,8 +52,8 @@ export const ManagersListPage = () => {
             {row.name.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="font-semibold text-white">{row.name}</p>
-            <p className="text-xs text-slate-500">ID: {row._id}</p>
+            <p className="font-semibold text-slate-800">{row.name}</p>
+            <p className="text-xs text-rose-300">ID: {row._id}</p>
           </div>
         </div>
       ),
@@ -62,8 +62,8 @@ export const ManagersListPage = () => {
       header: 'Email Address',
       accessor: 'email',
       render: (row) => (
-        <span className="flex items-center gap-2 text-slate-300">
-          <Mail className="w-3.5 h-3.5 text-slate-500" />
+        <span className="flex items-center gap-2 text-slate-600">
+          <Mail className="w-3.5 h-3.5 text-rose-300" />
           <span>{row.email}</span>
         </span>
       ),
@@ -72,8 +72,8 @@ export const ManagersListPage = () => {
       header: 'Contact Phone',
       accessor: 'phone',
       render: (row) => (
-        <span className="flex items-center gap-2 text-slate-300">
-          <Phone className="w-3.5 h-3.5 text-slate-500" />
+        <span className="flex items-center gap-2 text-slate-600">
+          <Phone className="w-3.5 h-3.5 text-rose-300" />
           <span>{row.phone || 'N/A'}</span>
         </span>
       ),
@@ -88,7 +88,7 @@ export const ManagersListPage = () => {
       accessor: 'createdAt',
       render: (row) => (
         <span className="flex items-center gap-2 text-slate-400 text-xs">
-          <Calendar className="w-3.5 h-3.5 text-slate-500" />
+          <Calendar className="w-3.5 h-3.5 text-rose-300" />
           <span>{new Date(row.createdAt).toLocaleDateString()}</span>
         </span>
       ),
@@ -100,7 +100,7 @@ export const ManagersListPage = () => {
       {/* Page Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
               <UserCheck className="w-6 h-6" />
             </div>

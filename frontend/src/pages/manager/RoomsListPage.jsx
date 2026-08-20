@@ -105,14 +105,14 @@ export const RoomsListPage = () => {
             Back to Hostel Details
           </Button>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
               <DoorOpen className="w-6 h-6" />
             </div>
             <span>Manage Rooms</span>
           </h1>
           <p className="text-sm text-slate-400">
-            {hostel?.name} • <span className="text-indigo-400 font-semibold">{rooms.length} Rooms</span>
+            {hostel?.name} • <span className="text-teal-400 font-semibold">{rooms.length} Rooms</span>
           </p>
         </div>
 
@@ -136,10 +136,10 @@ export const RoomsListPage = () => {
 
       {/* Rooms Table */}
       {rooms.length > 0 ? (
-        <div className="bg-slate-900/80 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+        <div className="bg-rose-50/80 border border-white rounded-3xl overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-300">
-              <thead className="text-xs uppercase bg-slate-950/50 text-slate-400 border-b border-slate-800">
+            <table className="w-full text-left text-sm text-slate-600">
+              <thead className="text-xs uppercase bg-rose-50/50 text-slate-400 border-b border-white">
                 <tr>
                   <th className="px-6 py-4 font-semibold">Room No.</th>
                   <th className="px-6 py-4 font-semibold">Floor</th>
@@ -150,26 +150,26 @@ export const RoomsListPage = () => {
                   <th className="px-6 py-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
+              <tbody className="divide-y divide-white">
                 {rooms.map((room) => {
                   const getStatusColor = (status) => {
                     switch (status) {
                       case 'Available': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
                       case 'Partially Occupied': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
                       case 'Full': return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
-                      case 'Maintenance': return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
-                      default: return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
+                      case 'Maintenance': return 'bg-rose-300/10 text-slate-400 border-rose-300/20';
+                      default: return 'bg-rose-300/10 text-slate-400 border-rose-300/20';
                     }
                   };
 
                   return (
-                    <tr key={room._id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="px-6 py-4 font-bold text-white">{room.roomNumber}</td>
+                    <tr key={room._id} className="hover:bg-white/30 transition-colors">
+                      <td className="px-6 py-4 font-bold text-slate-800">{room.roomNumber}</td>
                       <td className="px-6 py-4">{room.floor}</td>
                       <td className="px-6 py-4">{room.gender}</td>
                       <td className="px-6 py-4 text-center">
                         <span className="text-cyan-400 font-bold">{room.occupiedBeds}</span>
-                        <span className="text-slate-500"> / </span>
+                        <span className="text-rose-300"> / </span>
                         <span>{room.capacity}</span>
                       </td>
                       <td className="px-6 py-4 text-emerald-400 font-semibold">₹{room.monthlyRent}</td>
@@ -181,7 +181,7 @@ export const RoomsListPage = () => {
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2">
                           <Link to={`/manager/rooms/${room._id}/edit`}>
-                            <button className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors">
+                            <button className="p-2 rounded-lg bg-white text-slate-600 hover:text-slate-800 hover:bg-rose-100 transition-colors">
                               <Pencil className="w-4 h-4" />
                             </button>
                           </Link>
@@ -201,11 +201,11 @@ export const RoomsListPage = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-12 text-center space-y-4 shadow-xl">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-800/60 text-slate-500 border border-slate-700/50 flex items-center justify-center">
+        <div className="bg-rose-50/80 border border-white rounded-3xl p-12 text-center space-y-4 shadow-xl">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-white/60 text-rose-300 border border-rose-100/50 flex items-center justify-center">
             <DoorOpen className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-white">No rooms have been added to this hostel yet.</h3>
+          <h3 className="text-lg font-bold text-slate-800">No rooms have been added to this hostel yet.</h3>
           <p className="text-sm text-slate-400 max-w-md mx-auto">
             Get started by adding rooms to track capacity and occupancy.
           </p>

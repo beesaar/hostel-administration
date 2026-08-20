@@ -6,17 +6,17 @@ export const ManagerNavbar = ({ onOpenSidebar }) => {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800 px-4 sm:px-8 flex items-center justify-between">
+    <header className="sticky top-0 z-30 h-16 bg-rose-50/80 backdrop-blur-xl border-b border-white px-4 sm:px-8 flex items-center justify-between">
       {/* Left: Mobile Menu & Title */}
       <div className="flex items-center gap-3">
         <button
           onClick={onOpenSidebar}
-          className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-white transition-colors"
         >
           <Menu className="w-5 h-5" />
         </button>
         <div>
-          <h2 className="text-sm font-semibold text-white">Property Management</h2>
+          <h2 className="text-sm font-semibold text-slate-800">Property Management</h2>
           <p className="text-[11px] text-slate-400 hidden sm:block">
             Manage Your Hostel Listings & Track Approvals
           </p>
@@ -30,12 +30,12 @@ export const ManagerNavbar = ({ onOpenSidebar }) => {
           <span>Manager Active</span>
         </div>
 
-        <div className="flex items-center gap-3 pl-3 border-l border-slate-800">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-cyan-400 text-white flex items-center justify-center text-xs font-bold shadow-md shadow-cyan-600/20">
+        <div className="flex items-center gap-3 pl-3 border-l border-white">
+          <div className="w-8 h-8 rounded-full bg-teal-500 text-slate-800 flex items-center justify-center text-xs font-bold shadow-md shadow-teal-500/20">
             {user?.name ? user.name.charAt(0).toUpperCase() : 'M'}
           </div>
           <div className="hidden sm:block text-left">
-            <p className="text-xs font-bold text-white leading-tight">
+            <p className="text-xs font-bold text-slate-800 leading-tight">
               {user?.name || 'Manager'}
             </p>
             <p className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider">

@@ -55,7 +55,7 @@ export const ManagerDashboardPage = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
             Manager Dashboard
           </h1>
           <p className="text-sm text-slate-400 mt-1">
@@ -121,10 +121,10 @@ export const ManagerDashboardPage = () => {
       </div>
 
       {/* Recent Hostels */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 backdrop-blur-xl shadow-xl space-y-4">
+      <div className="bg-rose-50/80 border border-white rounded-2xl p-6 backdrop-blur-xl shadow-xl space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-white">Recent Hostel Submissions</h3>
+            <h3 className="text-base font-bold text-slate-800">Recent Hostel Submissions</h3>
             <p className="text-xs text-slate-400">Your latest property listings</p>
           </div>
           <Link
@@ -136,8 +136,8 @@ export const ManagerDashboardPage = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
+          <table className="w-full text-left text-xs text-slate-600">
+            <thead className="text-[11px] uppercase tracking-wider text-slate-400 border-b border-white">
               <tr>
                 <th className="pb-3 px-3">Hostel Name</th>
                 <th className="pb-3 px-3">Type</th>
@@ -146,11 +146,11 @@ export const ManagerDashboardPage = () => {
                 <th className="pb-3 px-3">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-white/60">
               {recentHostels.length > 0 ? (
                 recentHostels.map((hostel) => (
-                  <tr key={hostel._id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3 px-3 font-semibold text-white">
+                  <tr key={hostel._id} className="hover:bg-white/30 transition-colors">
+                    <td className="py-3 px-3 font-semibold text-slate-800">
                       <Link
                         to={`/manager/hostels/${hostel._id}`}
                         className="hover:text-cyan-400 transition-colors"
@@ -159,12 +159,12 @@ export const ManagerDashboardPage = () => {
                       </Link>
                     </td>
                     <td className="py-3 px-3">
-                      <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">
+                      <span className="px-2 py-0.5 rounded-md bg-white text-slate-600 border border-rose-100">
                         {hostel.type}
                       </span>
                     </td>
                     <td className="py-3 px-3 text-slate-400">{hostel.city}</td>
-                    <td className="py-3 px-3 text-slate-300">
+                    <td className="py-3 px-3 text-slate-600">
                       ₹{hostel.startingRent || 0}/mo
                     </td>
                     <td className="py-3 px-3">
@@ -174,7 +174,7 @@ export const ManagerDashboardPage = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-slate-500">
+                  <td colSpan={5} className="py-8 text-center text-rose-300">
                     You have not submitted any hostels yet.{' '}
                     <Link to="/manager/hostels/new" className="text-cyan-400 hover:underline">
                       Add your first hostel →

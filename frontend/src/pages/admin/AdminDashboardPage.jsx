@@ -74,7 +74,7 @@ export const AdminDashboardPage = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
             System Overview & Analytics
           </h1>
           <p className="text-sm text-slate-400 mt-1">
@@ -140,13 +140,13 @@ export const AdminDashboardPage = () => {
       </div>
 
       {/* Hostel Status Breakdown Banner */}
-      <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+      <div className="p-5 rounded-2xl bg-rose-50/80 border border-white flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+          <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white">Hostel Moderation Health</h4>
+            <h4 className="text-sm font-bold text-slate-800">Hostel Moderation Health</h4>
             <p className="text-xs text-slate-400">Status breakdown of all submitted properties</p>
           </div>
         </div>
@@ -170,23 +170,23 @@ export const AdminDashboardPage = () => {
       {/* 2-Column Split: Recent Hostels & Recent User Registrations */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Hostels (2 Cols) */}
-        <div className="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 backdrop-blur-xl space-y-4 shadow-xl">
+        <div className="lg:col-span-2 bg-rose-50/80 border border-white rounded-2xl p-6 backdrop-blur-xl space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-white">Recent Hostel Submissions</h3>
+              <h3 className="text-base font-bold text-slate-800">Recent Hostel Submissions</h3>
               <p className="text-xs text-slate-400">Newly registered accommodation facilities</p>
             </div>
             <Link
               to="/admin/hostels"
-              className="text-xs font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+              className="text-xs font-medium text-teal-400 hover:text-teal-600 flex items-center gap-1"
             >
               View All <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="text-[11px] uppercase tracking-wider text-slate-400 border-b border-slate-800">
+            <table className="w-full text-left text-xs text-slate-600">
+              <thead className="text-[11px] uppercase tracking-wider text-slate-400 border-b border-white">
                 <tr>
                   <th className="pb-3 px-3">Hostel Name</th>
                   <th className="pb-3 px-3">City</th>
@@ -195,20 +195,20 @@ export const AdminDashboardPage = () => {
                   <th className="pb-3 px-3">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-white/60">
                 {recentHostels.length > 0 ? (
                   recentHostels.map((hostel) => (
-                    <tr key={hostel._id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="py-3 px-3 font-semibold text-white">
+                    <tr key={hostel._id} className="hover:bg-white/30 transition-colors">
+                      <td className="py-3 px-3 font-semibold text-slate-800">
                         {hostel.name}
                       </td>
                       <td className="py-3 px-3 text-slate-400">{hostel.city}</td>
                       <td className="py-3 px-3">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">
+                        <span className="px-2 py-0.5 rounded-md bg-white text-slate-600 border border-rose-100">
                           {hostel.type}
                         </span>
                       </td>
-                      <td className="py-3 px-3 text-slate-300">
+                      <td className="py-3 px-3 text-slate-600">
                         {hostel.manager?.name || 'Unassigned'}
                       </td>
                       <td className="py-3 px-3">
@@ -218,7 +218,7 @@ export const AdminDashboardPage = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="py-6 text-center text-slate-500">
+                    <td colSpan={5} className="py-6 text-center text-rose-300">
                       No hostel submissions recorded yet.
                     </td>
                   </tr>
@@ -229,10 +229,10 @@ export const AdminDashboardPage = () => {
         </div>
 
         {/* Recent Registrations (1 Col) */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 backdrop-blur-xl space-y-4 shadow-xl">
+        <div className="bg-rose-50/80 border border-white rounded-2xl p-6 backdrop-blur-xl space-y-4 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-white">Recent Users</h3>
+              <h3 className="text-base font-bold text-slate-800">Recent Users</h3>
               <p className="text-xs text-slate-400">Newly joined accounts</p>
             </div>
           </div>
@@ -242,17 +242,17 @@ export const AdminDashboardPage = () => {
               recentUsers.map((u) => (
                 <div
                   key={u._id}
-                  className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-3"
+                  className="p-3 rounded-xl bg-rose-50/60 border border-white/80 flex items-center justify-between gap-3"
                 >
                   <div className="overflow-hidden">
-                    <p className="text-xs font-semibold text-white truncate">{u.name}</p>
+                    <p className="text-xs font-semibold text-slate-800 truncate">{u.name}</p>
                     <p className="text-[11px] text-slate-400 truncate">{u.email}</p>
                   </div>
                   <StatusBadge status={u.role} />
                 </div>
               ))
             ) : (
-              <p className="text-xs text-slate-500 text-center py-6">
+              <p className="text-xs text-rose-300 text-center py-6">
                 No users found.
               </p>
             )}

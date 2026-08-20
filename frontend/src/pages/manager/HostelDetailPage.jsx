@@ -105,7 +105,7 @@ export const HostelDetailPage = () => {
             Back to My Hostels
           </Button>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
               <Building2 className="w-6 h-6" />
             </div>
@@ -161,39 +161,39 @@ export const HostelDetailPage = () => {
         {/* Left Column: Details */}
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <h3 className="text-sm font-bold text-white">Description</h3>
-            <p className="text-sm text-slate-300 leading-relaxed">
+          <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-3">
+            <h3 className="text-sm font-bold text-slate-800">Description</h3>
+            <p className="text-sm text-slate-600 leading-relaxed">
               {hostel.description || 'No description provided.'}
             </p>
           </div>
 
           {/* Location Details */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+          <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-3">
+            <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
               <MapPin className="w-4 h-4 text-emerald-400" /> Location
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-300">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
               <div>
-                <span className="text-slate-500">Address:</span>{' '}
-                <span className="text-white">{hostel.address}</span>
+                <span className="text-rose-300">Address:</span>{' '}
+                <span className="text-slate-800">{hostel.address}</span>
               </div>
               <div>
-                <span className="text-slate-500">City:</span>{' '}
-                <span className="text-white">{hostel.city}</span>
+                <span className="text-rose-300">City:</span>{' '}
+                <span className="text-slate-800">{hostel.city}</span>
               </div>
               <div>
-                <span className="text-slate-500">State:</span>{' '}
-                <span className="text-white">{hostel.state}</span>
+                <span className="text-rose-300">State:</span>{' '}
+                <span className="text-slate-800">{hostel.state}</span>
               </div>
               <div>
-                <span className="text-slate-500">Pincode:</span>{' '}
-                <span className="text-white">{hostel.pincode}</span>
+                <span className="text-rose-300">Pincode:</span>{' '}
+                <span className="text-slate-800">{hostel.pincode}</span>
               </div>
               {hostel.location?.coordinates && (
                 <div className="sm:col-span-2">
-                  <span className="text-slate-500">Coordinates:</span>{' '}
-                  <span className="text-white">
+                  <span className="text-rose-300">Coordinates:</span>{' '}
+                  <span className="text-slate-800">
                     {hostel.location.coordinates[1]}°N, {hostel.location.coordinates[0]}°E
                   </span>
                 </div>
@@ -203,15 +203,15 @@ export const HostelDetailPage = () => {
 
           {/* Facilities */}
           {hostel.facilities && hostel.facilities.length > 0 && (
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Tag className="w-4 h-4 text-indigo-400" /> Facilities ({hostel.facilities.length})
+            <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-3">
+              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <Tag className="w-4 h-4 text-teal-400" /> Facilities ({hostel.facilities.length})
               </h3>
               <div className="flex flex-wrap gap-2">
                 {hostel.facilities.map((f, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
+                    className="px-3 py-1.5 rounded-xl text-xs font-medium bg-teal-500/10 text-teal-600 border border-teal-500/20"
                   >
                     {f}
                   </span>
@@ -222,13 +222,13 @@ export const HostelDetailPage = () => {
 
           {/* Hostel Rules */}
           {hostel.hostelRules && hostel.hostelRules.length > 0 && (
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-3">
+              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
                 <ScrollText className="w-4 h-4 text-cyan-400" /> Hostel Rules
               </h3>
-              <ol className="space-y-1.5 text-xs text-slate-300 list-decimal list-inside">
+              <ol className="space-y-1.5 text-xs text-slate-600 list-decimal list-inside">
                 {hostel.hostelRules.map((rule, idx) => (
-                  <li key={idx} className="p-2 rounded-lg bg-slate-950/50 border border-slate-800/80">
+                  <li key={idx} className="p-2 rounded-lg bg-rose-50/50 border border-white/80">
                     {rule}
                   </li>
                 ))}
@@ -240,49 +240,49 @@ export const HostelDetailPage = () => {
         {/* Right Column: Quick Stats */}
         <div className="space-y-6">
           {/* Contact Card */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <h3 className="text-sm font-bold text-white">Contact Information</h3>
-            <div className="space-y-2 text-xs text-slate-300">
+          <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-3">
+            <h3 className="text-sm font-bold text-slate-800">Contact Information</h3>
+            <div className="space-y-2 text-xs text-slate-600">
               <p className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-slate-500" />
+                <Phone className="w-3.5 h-3.5 text-rose-300" />
                 <span>{hostel.contactPhone}</span>
               </p>
               <p className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-slate-500" />
+                <Mail className="w-3.5 h-3.5 text-rose-300" />
                 <span>{hostel.contactEmail}</span>
               </p>
             </div>
           </div>
 
           {/* Capacity Stats */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h3 className="text-sm font-bold text-white">Capacity & Pricing</h3>
+          <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-4">
+            <h3 className="text-sm font-bold text-slate-800">Capacity & Pricing</h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-rose-50/60 border border-white/80">
                 <span className="flex items-center gap-2 text-xs text-slate-400">
-                  <DoorOpen className="w-4 h-4 text-indigo-400" /> Rooms
+                  <DoorOpen className="w-4 h-4 text-teal-400" /> Rooms
                 </span>
-                <span className="text-sm font-bold text-white">{hostel.totalRooms || 0}</span>
+                <span className="text-sm font-bold text-slate-800">{hostel.totalRooms || 0}</span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-rose-50/60 border border-white/80">
                 <span className="flex items-center gap-2 text-xs text-slate-400">
                   <BedDouble className="w-4 h-4 text-cyan-400" /> Beds
                 </span>
-                <span className="text-sm font-bold text-white">{hostel.totalBeds || 0}</span>
+                <span className="text-sm font-bold text-slate-800">{hostel.totalBeds || 0}</span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-rose-50/60 border border-white/80">
                 <span className="flex items-center gap-2 text-xs text-slate-400">
                   <IndianRupee className="w-4 h-4 text-amber-400" /> Rent (from)
                 </span>
-                <span className="text-sm font-bold text-white">
+                <span className="text-sm font-bold text-slate-800">
                   ₹{hostel.startingRent || 0}/mo
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-rose-50/60 border border-white/80">
                 <span className="flex items-center gap-2 text-xs text-slate-400">
                   <IndianRupee className="w-4 h-4 text-emerald-400" /> Deposit
                 </span>
-                <span className="text-sm font-bold text-white">
+                <span className="text-sm font-bold text-slate-800">
                   ₹{hostel.securityDeposit || 0}
                 </span>
               </div>
@@ -290,8 +290,8 @@ export const HostelDetailPage = () => {
           </div>
 
           {/* Room Management */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h3 className="text-sm font-bold text-white">Room Management</h3>
+          <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-4">
+            <h3 className="text-sm font-bold text-slate-800">Room Management</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
               Manage individual rooms, configure bed capacity, and track occupancy for this property.
             </p>

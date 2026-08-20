@@ -72,16 +72,16 @@ export const HostelForm = ({
   };
 
   const inputClass =
-    'w-full px-3 py-2.5 bg-slate-950/70 border border-slate-800 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors';
+    'w-full px-3 py-2.5 bg-rose-50/70 border border-white rounded-xl text-sm text-slate-700 placeholder-rose-300 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-colors';
   const labelClass =
-    'block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5';
+    'block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Section 1: Basic Information */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-5">
-        <div className="flex items-center gap-2 text-base font-bold text-white">
-          <Building2 className="w-5 h-5 text-indigo-400" />
+      <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-5">
+        <div className="flex items-center gap-2 text-base font-bold text-slate-800">
+          <Building2 className="w-5 h-5 text-teal-400" />
           <span>Basic Information</span>
         </div>
 
@@ -131,7 +131,7 @@ export const HostelForm = ({
           <div>
             <label className={labelClass}>Contact Phone *</label>
             <div className="relative">
-              <Phone className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Phone className="w-4 h-4 text-rose-300 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 name="contactPhone"
@@ -147,7 +147,7 @@ export const HostelForm = ({
           <div>
             <label className={labelClass}>Contact Email *</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Mail className="w-4 h-4 text-rose-300 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="email"
                 name="contactEmail"
@@ -163,8 +163,8 @@ export const HostelForm = ({
       </div>
 
       {/* Section 2: Location Details */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-5">
-        <div className="flex items-center gap-2 text-base font-bold text-white">
+      <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-5">
+        <div className="flex items-center gap-2 text-base font-bold text-slate-800">
           <MapPin className="w-5 h-5 text-emerald-400" />
           <span>Location Details</span>
         </div>
@@ -251,8 +251,8 @@ export const HostelForm = ({
       </div>
 
       {/* Section 3: Capacity & Pricing */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-5">
-        <div className="flex items-center gap-2 text-base font-bold text-white">
+      <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-5">
+        <div className="flex items-center gap-2 text-base font-bold text-slate-800">
           <IndianRupee className="w-5 h-5 text-amber-400" />
           <span>Capacity & Pricing</span>
         </div>
@@ -261,7 +261,7 @@ export const HostelForm = ({
           <div>
             <label className={labelClass}>Total Rooms</label>
             <div className="relative">
-              <DoorOpen className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <DoorOpen className="w-4 h-4 text-rose-300 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="number"
                 min="0"
@@ -277,7 +277,7 @@ export const HostelForm = ({
           <div>
             <label className={labelClass}>Total Beds</label>
             <div className="relative">
-              <BedDouble className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <BedDouble className="w-4 h-4 text-rose-300 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="number"
                 min="0"
@@ -293,7 +293,7 @@ export const HostelForm = ({
           <div>
             <label className={labelClass}>Starting Rent (₹/month)</label>
             <div className="relative">
-              <IndianRupee className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <IndianRupee className="w-4 h-4 text-rose-300 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="number"
                 min="0"
@@ -309,7 +309,7 @@ export const HostelForm = ({
           <div>
             <label className={labelClass}>Security Deposit (₹)</label>
             <div className="relative">
-              <IndianRupee className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <IndianRupee className="w-4 h-4 text-rose-300 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="number"
                 min="0"
@@ -325,7 +325,7 @@ export const HostelForm = ({
       </div>
 
       {/* Section 4: Facilities */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
+      <div className="bg-rose-50/80 border border-white rounded-2xl p-6">
         <FacilitySelector
           selected={formData.facilities}
           onChange={(facilities) => setFormData((prev) => ({ ...prev, facilities }))}
@@ -334,8 +334,8 @@ export const HostelForm = ({
       </div>
 
       {/* Section 5: Hostel Rules */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
-        <div className="flex items-center gap-2 text-base font-bold text-white">
+      <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-4">
+        <div className="flex items-center gap-2 text-base font-bold text-slate-800">
           <ScrollText className="w-5 h-5 text-cyan-400" />
           <span>Hostel Rules</span>
         </div>
@@ -345,7 +345,7 @@ export const HostelForm = ({
             {formData.hostelRules.map((rule, idx) => (
               <li
                 key={idx}
-                className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs text-slate-300"
+                className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-rose-50/60 border border-white/80 text-xs text-slate-600"
               >
                 <span>
                   {idx + 1}. {rule}
@@ -353,7 +353,7 @@ export const HostelForm = ({
                 <button
                   type="button"
                   onClick={() => removeRule(rule)}
-                  className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                  className="p-1 rounded-lg text-rose-300 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                 >
                   <span className="text-xs">✕</span>
                 </button>

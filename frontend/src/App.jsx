@@ -26,12 +26,14 @@ import HostelDetailPage from './pages/manager/HostelDetailPage';
 import RoomsListPage from './pages/manager/RoomsListPage';
 import AddRoomPage from './pages/manager/AddRoomPage';
 import EditRoomPage from './pages/manager/EditRoomPage';
+import ManagerBookingsPage from './pages/manager/ManagerBookingsPage';
 
 // Student Imports
 import StudentLayout from './layouts/StudentLayout';
 import StudentDashboardPage from './pages/student/StudentDashboardPage';
 import HostelsDiscoveryPage from './pages/student/HostelsDiscoveryPage';
 import StudentHostelDetailPage from './pages/student/StudentHostelDetailPage';
+import StudentBookingsPage from './pages/student/StudentBookingsPage';
 
 // Root redirector based on authentication state and role
 const RootRedirect = () => {
@@ -89,6 +91,7 @@ function App() {
               <Route path="hostels/:hostelId/rooms" element={<RoomsListPage />} />
               <Route path="hostels/:hostelId/rooms/new" element={<AddRoomPage />} />
               <Route path="rooms/:roomId/edit" element={<EditRoomPage />} />
+              <Route path="bookings" element={<ManagerBookingsPage />} />
             </Route>
           </Route>
 
@@ -99,6 +102,7 @@ function App() {
               <Route path="dashboard" element={<StudentDashboardPage />} />
               <Route path="hostels" element={<HostelsDiscoveryPage />} />
               <Route path="hostels/:id" element={<StudentHostelDetailPage />} />
+              <Route path="bookings" element={<StudentBookingsPage />} />
             </Route>
           </Route>
 

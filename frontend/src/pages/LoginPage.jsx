@@ -31,6 +31,7 @@ export const LoginPage = () => {
   if (isAuthenticated && user) {
     if (user.role === 'Admin') return <Navigate to="/admin/dashboard" replace />;
     if (user.role === 'Hostel Manager') return <Navigate to="/manager/dashboard" replace />;
+    if (user.role === 'Student') return <Navigate to="/student/dashboard" replace />;
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -46,6 +47,8 @@ export const LoginPage = () => {
       navigate('/admin/dashboard', { replace: true });
     } else if (role === 'Hostel Manager') {
       navigate('/manager/dashboard', { replace: true });
+    } else if (role === 'Student') {
+      navigate('/student/dashboard', { replace: true });
     } else {
       navigate('/dashboard', { replace: true });
     }

@@ -5,6 +5,7 @@ import {
   Building2,
   PlusCircle,
   UserCheck,
+  CalendarDays,
   LogOut,
   X,
 } from 'lucide-react';
@@ -17,6 +18,7 @@ export const ManagerSidebar = ({ isOpen, onClose }) => {
     { label: 'Dashboard', path: '/manager/dashboard', icon: LayoutDashboard },
     { label: 'My Hostels', path: '/manager/hostels', icon: Building2 },
     { label: 'Add New Hostel', path: '/manager/hostels/new', icon: PlusCircle },
+    { label: 'Booking Requests', path: '/manager/bookings', icon: CalendarDays },
   ];
 
   return (

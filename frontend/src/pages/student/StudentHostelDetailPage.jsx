@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, BedDouble, CheckCircle2, User, Building2, Tag, IndianRupee } from 'lucide-react';
 import { studentService } from '../../services/studentService';
+import { bookingService } from '../../services/bookingService';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import Toast from '../../components/Toast';
 
 const StudentHostelDetailPage = () => {
   const { id } = useParams();
@@ -11,6 +13,10 @@ const StudentHostelDetailPage = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Toast state
+  const [toast, setToast] = useState(null);
+  const [isBooking, setIsBooking] = useState(false);
 
   useEffect(() => {
     fetchHostelDetails();
@@ -31,6 +37,18 @@ const StudentHostelDetailPage = () => {
       setError(err.response?.data?.message || 'Failed to load hostel details. It may not exist or is not approved.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleBookRoom = async (roomId) => {
+    try {
+      setIsBooking(true);
+      await bookingService.createBooking(hostel._id, roomId);
+      setToast({ type: 'success', message: 'Booking request submitted successfully! Check My Bookings.' });
+    } catch (err) {
+      setToast({ type: 'error', message: err.response?.data?.message || 'Failed to submit booking request.' });
+    } finally {
+      setIsBooking(false);
     }
   };
 
@@ -209,12 +227,36 @@ const StudentHostelDetailPage = () => {
                     </span>
                   )}
                 </div>
+
+                {/* Booking Button */}
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <button
+                    onClick={() => handleBookRoom(room._id)}
+                    disabled={isBooking || room.status === 'Full' || room.status === 'Maintenance'}
+                    className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
+                      room.status === 'Full' || room.status === 'Maintenance'
+                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        : 'bg-violet-600 hover:bg-violet-700 text-white shadow-md shadow-violet-600/20'
+                    }`}
+                  >
+                    {room.status === 'Full' || room.status === 'Maintenance' 
+                      ? 'Unavailable' 
+                      : 'Book Room'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
 
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 };

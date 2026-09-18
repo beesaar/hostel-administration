@@ -4,6 +4,7 @@ import {
   Search,
   LayoutDashboard,
   UserCheck,
+  CalendarDays,
   LogOut,
   X,
 } from 'lucide-react';
@@ -15,6 +16,7 @@ export const StudentSidebar = ({ isOpen, onClose }) => {
   const navItems = [
     { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
     { label: 'Discover Hostels', path: '/student/hostels', icon: Search },
+    { label: 'My Bookings', path: '/student/bookings', icon: CalendarDays },
   ];
 
   return (

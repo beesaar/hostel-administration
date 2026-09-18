@@ -41,4 +41,16 @@ export const adminService = {
     const response = await api.put(`/admin/hostels/${id}/reject`, { reason });
     return response.data;
   },
+
+  // 7. Delete a user (student or manager)
+  deleteUser: async (id) => {
+    const response = await api.delete(`/admin/users/${id}`);
+    return response.data;
+  },
+
+  // 8. Delete a hostel
+  deleteHostel: async (id) => {
+    const response = await api.delete(`/admin/hostels/${id}`);
+    return response.data;
+  },
 };

@@ -7,6 +7,8 @@ const {
   getAllHostels,
   approveHostel,
   rejectHostel,
+  deleteUser,
+  deleteHostel,
 } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -25,5 +27,9 @@ router.get('/students', getAllStudents);
 router.get('/hostels', getAllHostels);
 router.put('/hostels/:id/approve', approveHostel);
 router.put('/hostels/:id/reject', rejectHostel);
+
+// 4. Delete Management Routes
+router.delete('/users/:id', deleteUser);
+router.delete('/hostels/:id', deleteHostel);
 
 module.exports = router;

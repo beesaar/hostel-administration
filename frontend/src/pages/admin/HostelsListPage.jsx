@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   XCircle,
   Eye,
+  Trash2,
 } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 import Table from '../../components/Table';
@@ -52,6 +53,24 @@ export const HostelsListPage = () => {
   const handleRefresh = () => {
     setRefreshing(true);
     fetchHostels(statusFilter, search);
+  };
+
+  const handleDelete = async (id, name) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete hostel "${name}"?\n\nWARNING: All rooms associated with this hostel will also be deleted. This action cannot be undone.`
+      )
+    ) {
+      try {
+        const res = await adminService.deleteHostel(id);
+        if (res.success) {
+          fetchHostels(statusFilter, search);
+        }
+      } catch (err) {
+        console.error('Error deleting hostel:', err);
+        setError(err.response?.data?.message || 'Failed to delete hostel');
+      }
+    }
   };
 
   const tabs = [
@@ -131,16 +150,25 @@ export const HostelsListPage = () => {
     {
       header: 'Action',
       accessor: '_id',
-      render: (row) =>
-        row.status === 'Pending' ? (
-          <Link to="/admin/pending-approvals">
-            <Button variant="outline" size="sm" icon={Eye}>
-              Review
-            </Button>
-          </Link>
-        ) : (
-          <span className="text-xs text-rose-300">—</span>
-        ),
+      render: (row) => (
+        <div className="flex items-center gap-2">
+          {row.status === 'Pending' && (
+            <Link to="/admin/pending-approvals">
+              <Button variant="outline" size="sm" icon={Eye}>
+                Review
+              </Button>
+            </Link>
+          )}
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => handleDelete(row._id, row.name)}
+            icon={Trash2}
+          >
+            Delete
+          </Button>
+        </div>
+      ),
     },
   ];
 

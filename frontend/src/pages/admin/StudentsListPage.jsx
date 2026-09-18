@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GraduationCap, Mail, Phone, Calendar, RefreshCw } from 'lucide-react';
+import { GraduationCap, Mail, Phone, Calendar, RefreshCw, Trash2 } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 import Table from '../../components/Table';
 import StatusBadge from '../../components/StatusBadge';
@@ -40,6 +40,24 @@ export const StudentsListPage = () => {
   const handleRefresh = () => {
     setRefreshing(true);
     fetchStudents(search);
+  };
+
+  const handleDelete = async (id, name) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete student "${name}"? This action cannot be undone.`
+      )
+    ) {
+      try {
+        const res = await adminService.deleteUser(id);
+        if (res.success) {
+          fetchStudents(search);
+        }
+      } catch (err) {
+        console.error('Error deleting student:', err);
+        setError(err.response?.data?.message || 'Failed to delete student');
+      }
+    }
   };
 
   const columns = [
@@ -91,6 +109,20 @@ export const StudentsListPage = () => {
           <Calendar className="w-3.5 h-3.5 text-rose-300" />
           <span>{new Date(row.createdAt).toLocaleDateString()}</span>
         </span>
+      ),
+    },
+    {
+      header: 'Action',
+      accessor: '_id',
+      render: (row) => (
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => handleDelete(row._id, row.name)}
+          icon={Trash2}
+        >
+          Delete
+        </Button>
       ),
     },
   ];

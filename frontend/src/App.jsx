@@ -27,6 +27,12 @@ import RoomsListPage from './pages/manager/RoomsListPage';
 import AddRoomPage from './pages/manager/AddRoomPage';
 import EditRoomPage from './pages/manager/EditRoomPage';
 
+// Student Imports
+import StudentLayout from './layouts/StudentLayout';
+import StudentDashboardPage from './pages/student/StudentDashboardPage';
+import HostelsDiscoveryPage from './pages/student/HostelsDiscoveryPage';
+import StudentHostelDetailPage from './pages/student/StudentHostelDetailPage';
+
 // Root redirector based on authentication state and role
 const RootRedirect = () => {
   const { isAuthenticated, user, loading } = useAuth();
@@ -36,6 +42,7 @@ const RootRedirect = () => {
   if (isAuthenticated) {
     if (user?.role === 'Admin') return <Navigate to="/admin/dashboard" replace />;
     if (user?.role === 'Hostel Manager') return <Navigate to="/manager/dashboard" replace />;
+    if (user?.role === 'Student') return <Navigate to="/student/dashboard" replace />;
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -82,6 +89,16 @@ function App() {
               <Route path="hostels/:hostelId/rooms" element={<RoomsListPage />} />
               <Route path="hostels/:hostelId/rooms/new" element={<AddRoomPage />} />
               <Route path="rooms/:roomId/edit" element={<EditRoomPage />} />
+            </Route>
+          </Route>
+
+          {/* Protected Student Routes */}
+          <Route element={<ProtectedRoute requiredRole="Student" />}>
+            <Route path="/student" element={<StudentLayout />}>
+              <Route index element={<Navigate to="/student/dashboard" replace />} />
+              <Route path="dashboard" element={<StudentDashboardPage />} />
+              <Route path="hostels" element={<HostelsDiscoveryPage />} />
+              <Route path="hostels/:id" element={<StudentHostelDetailPage />} />
             </Route>
           </Route>
 

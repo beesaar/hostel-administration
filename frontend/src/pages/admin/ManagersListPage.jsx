@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserCheck, Mail, Phone, Calendar, RefreshCw } from 'lucide-react';
+import { UserCheck, Mail, Phone, Calendar, RefreshCw, Trash2 } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 import Table from '../../components/Table';
 import StatusBadge from '../../components/StatusBadge';
@@ -40,6 +40,24 @@ export const ManagersListPage = () => {
   const handleRefresh = () => {
     setRefreshing(true);
     fetchManagers(search);
+  };
+
+  const handleDelete = async (id, name) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete manager "${name}"?\n\nWARNING: All hostels and rooms managed by this user will also be deleted. This action cannot be undone.`
+      )
+    ) {
+      try {
+        const res = await adminService.deleteUser(id);
+        if (res.success) {
+          fetchManagers(search);
+        }
+      } catch (err) {
+        console.error('Error deleting manager:', err);
+        setError(err.response?.data?.message || 'Failed to delete manager');
+      }
+    }
   };
 
   const columns = [
@@ -91,6 +109,20 @@ export const ManagersListPage = () => {
           <Calendar className="w-3.5 h-3.5 text-rose-300" />
           <span>{new Date(row.createdAt).toLocaleDateString()}</span>
         </span>
+      ),
+    },
+    {
+      header: 'Action',
+      accessor: '_id',
+      render: (row) => (
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => handleDelete(row._id, row.name)}
+          icon={Trash2}
+        >
+          Delete
+        </Button>
       ),
     },
   ];

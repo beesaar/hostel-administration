@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   createBooking,
   getStudentBookings,
+  getStudentAccommodationStatus,
   getManagerBookings,
   updateBookingStatus,
 } = require('../controllers/bookingController');
@@ -13,6 +14,7 @@ router.use(protect);
 // Student Routes
 router.post('/', authorize('Student'), createBooking);
 router.get('/student', authorize('Student'), getStudentBookings);
+router.get('/student/status', authorize('Student'), getStudentAccommodationStatus);
 
 // Manager Routes
 router.get('/manager', authorize('Hostel Manager'), getManagerBookings);

@@ -7,17 +7,45 @@ import {
   CalendarDays,
   LogOut,
   X,
+  MessageSquareWarning,
+  Home
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export const StudentSidebar = ({ isOpen, onClose }) => {
+export const StudentSidebar = ({ isOpen, onClose, accommodationState }) => {
   const { user, logout } = useAuth();
 
-  const navItems = [
-    { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
-    { label: 'Discover Hostels', path: '/student/hostels', icon: Search },
-    { label: 'My Bookings', path: '/student/bookings', icon: CalendarDays },
-  ];
+  const getNavItems = () => {
+    const baseItems = [
+      { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
+    ];
+
+    if (accommodationState === 'ACTIVE_RESIDENT') {
+      return [
+        ...baseItems,
+        { label: 'My Room', path: '/student/room', icon: Home },
+        { label: 'My Complaints', path: '/student/complaints', icon: MessageSquareWarning },
+      ];
+    }
+
+    if (accommodationState === 'PENDING') {
+      return [
+        ...baseItems,
+        { label: 'My Booking', path: '/student/bookings', icon: CalendarDays },
+        { label: 'My Complaints', path: '/student/complaints', icon: MessageSquareWarning },
+      ];
+    }
+
+    // Default to NO_ROOM (or safe fallback if undefined)
+    return [
+      ...baseItems,
+      { label: 'Discover Hostels', path: '/student/hostels', icon: Search },
+      { label: 'My Bookings', path: '/student/bookings', icon: CalendarDays },
+      { label: 'My Complaints', path: '/student/complaints', icon: MessageSquareWarning },
+    ];
+  };
+
+  const navItems = getNavItems();
 
   return (
     <>

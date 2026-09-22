@@ -8,6 +8,7 @@ import {
   CalendarDays,
   LogOut,
   X,
+  MessageSquareWarning,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -19,6 +20,7 @@ export const ManagerSidebar = ({ isOpen, onClose }) => {
     { label: 'My Hostels', path: '/manager/hostels', icon: Building2 },
     { label: 'Add New Hostel', path: '/manager/hostels/new', icon: PlusCircle },
     { label: 'Booking Requests', path: '/manager/bookings', icon: CalendarDays },
+    { label: 'Complaints', path: '/manager/complaints', icon: MessageSquareWarning },
   ];
 
   return (

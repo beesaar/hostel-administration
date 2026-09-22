@@ -27,6 +27,7 @@ import RoomsListPage from './pages/manager/RoomsListPage';
 import AddRoomPage from './pages/manager/AddRoomPage';
 import EditRoomPage from './pages/manager/EditRoomPage';
 import ManagerBookingsPage from './pages/manager/ManagerBookingsPage';
+import ManagerComplaintsPage from './pages/manager/ManagerComplaintsPage';
 
 // Student Imports
 import StudentLayout from './layouts/StudentLayout';
@@ -34,6 +35,8 @@ import StudentDashboardPage from './pages/student/StudentDashboardPage';
 import HostelsDiscoveryPage from './pages/student/HostelsDiscoveryPage';
 import StudentHostelDetailPage from './pages/student/StudentHostelDetailPage';
 import StudentBookingsPage from './pages/student/StudentBookingsPage';
+import StudentComplaintsPage from './pages/student/StudentComplaintsPage';
+import MyRoomPage from './pages/student/MyRoomPage';
 
 // Root redirector based on authentication state and role
 const RootRedirect = () => {
@@ -92,6 +95,7 @@ function App() {
               <Route path="hostels/:hostelId/rooms/new" element={<AddRoomPage />} />
               <Route path="rooms/:roomId/edit" element={<EditRoomPage />} />
               <Route path="bookings" element={<ManagerBookingsPage />} />
+              <Route path="complaints" element={<ManagerComplaintsPage />} />
             </Route>
           </Route>
 
@@ -103,6 +107,8 @@ function App() {
               <Route path="hostels" element={<HostelsDiscoveryPage />} />
               <Route path="hostels/:id" element={<StudentHostelDetailPage />} />
               <Route path="bookings" element={<StudentBookingsPage />} />
+              <Route path="complaints" element={<StudentComplaintsPage />} />
+              <Route path="room" element={<MyRoomPage />} />
             </Route>
           </Route>
 

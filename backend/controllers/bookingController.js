@@ -80,6 +80,53 @@ const getStudentBookings = async (req, res) => {
   }
 };
 
+// @desc    Get student accommodation status
+// @route   GET /api/bookings/student/status
+// @access  Private (Student)
+const getStudentAccommodationStatus = async (req, res) => {
+  try {
+    // 1. Check for an Approved booking first
+    let booking = await Booking.findOne({ student: req.user._id, status: 'Approved' })
+      .populate({
+        path: 'hostel',
+        select: 'name address city state type facilities amenities contactPhone contactEmail manager',
+        populate: {
+          path: 'manager',
+          select: 'name phone email'
+        }
+      })
+      .populate('room', 'roomNumber capacity occupiedBeds availableBeds status floor monthlyRent AC attachedBathroom');
+
+    if (booking) {
+      return res.status(200).json({
+        state: 'ACTIVE_RESIDENT',
+        booking
+      });
+    }
+
+    // 2. If no Approved booking, check for a Pending booking
+    booking = await Booking.findOne({ student: req.user._id, status: 'Pending' })
+      .populate('hostel', 'name address city type')
+      .populate('room', 'roomNumber floor monthlyRent');
+
+    if (booking) {
+      return res.status(200).json({
+        state: 'PENDING',
+        booking
+      });
+    }
+
+    // 3. Otherwise, they have no active room
+    return res.status(200).json({
+      state: 'NO_ROOM',
+      booking: null
+    });
+  } catch (error) {
+    console.error('Error fetching student accommodation status:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 // @desc    Get manager's hostel bookings
 // @route   GET /api/bookings/manager
 // @access  Private (Hostel Manager)
@@ -164,6 +211,7 @@ const updateBookingStatus = async (req, res) => {
 module.exports = {
   createBooking,
   getStudentBookings,
+  getStudentAccommodationStatus,
   getManagerBookings,
   updateBookingStatus,
 };

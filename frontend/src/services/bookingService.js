@@ -11,6 +11,11 @@ export const bookingService = {
     return response.data;
   },
 
+  getStudentAccommodationStatus: async () => {
+    const response = await api.get('/bookings/student/status');
+    return response.data;
+  },
+
   getManagerBookings: async () => {
     const response = await api.get('/bookings/manager');
     return response.data;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
-import { ArrowLeft, MapPin, BedDouble, CheckCircle2, User, Building2, Tag, IndianRupee, Clock } from 'lucide-react';
+import { ArrowLeft, MapPin, BedDouble, CheckCircle2, User, Building2, Tag, IndianRupee, Clock, Navigation } from 'lucide-react';
 import { studentService } from '../../services/studentService';
 import { bookingService } from '../../services/bookingService';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -228,10 +228,23 @@ const StudentHostelDetailPage = () => {
 
             return (
               <div>
-                <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-emerald-500" />
-                  Location
-                </h3>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-emerald-500" />
+                    Location
+                  </h3>
+                  {hasValidCoords && (
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${coords[1]},${coords[0]}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-bold transition-colors"
+                    >
+                      <Navigation className="w-3.5 h-3.5" />
+                      Get Directions
+                    </a>
+                  )}
+                </div>
                 <div className="text-sm text-slate-600 mb-3">
                   {hostel.address}, {hostel.city}, {hostel.state} — {hostel.pincode}
                 </div>

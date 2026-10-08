@@ -285,19 +285,7 @@ export const StudentsListPage = () => {
                       <span className="font-bold text-slate-800">
                         {selectedStudent.currentAccommodation.hostel?.name}
                       </span>
-                      <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          selectedStudent.currentAccommodation.status === 'Approved'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : selectedStudent.currentAccommodation.status === 'Leave_Requested'
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-amber-50 text-amber-600'
-                        }`}
-                      >
-                        {selectedStudent.currentAccommodation.status === 'Approved'
-                          ? 'Active Resident'
-                          : selectedStudent.currentAccommodation.status}
-                      </span>
+                      <StatusBadge status={selectedStudent.currentAccommodation.status} />
                     </div>
                     <p className="text-[11px] text-slate-500 flex items-center gap-1">
                       <BedDouble className="w-3 h-3 text-blue-500" /> Room{' '}

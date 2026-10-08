@@ -29,7 +29,7 @@ const STATUS_LABELS = {
   Approved: 'Approved',
   Rejected: 'Rejected',
   Cancelled: 'Cancelled',
-  Leave_Requested: 'Leave Req.',
+  Leave_Requested: 'Leave Request',
   Completed: 'Completed',
 };
 

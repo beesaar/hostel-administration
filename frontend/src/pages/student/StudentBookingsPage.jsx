@@ -80,9 +80,8 @@ const StudentBookingsPage = () => {
                       {booking.hostel.city}, {booking.hostel.address}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100">
-                     {getStatusIcon(booking.status)}
-                     <span className="text-xs font-bold text-slate-700">{booking.status}</span>
+                  <div>
+                     <StatusBadge status={booking.status} />
                   </div>
                 </div>
 

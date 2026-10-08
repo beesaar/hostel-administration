@@ -40,6 +40,36 @@ export const StatusBadge = ({ status }) => {
           icon: <GraduationCap className="w-3.5 h-3.5" />,
           label: 'Student',
         };
+      case 'leave_requested':
+        return {
+          bg: 'bg-orange-500/10 text-orange-400 border-orange-500/30',
+          icon: <Clock className="w-3.5 h-3.5" />,
+          label: 'Leave Request',
+        };
+      case 'cancelled':
+        return {
+          bg: 'bg-slate-500/10 text-slate-400 border-slate-500/30',
+          icon: <XCircle className="w-3.5 h-3.5" />,
+          label: 'Cancelled',
+        };
+      case 'completed':
+        return {
+          bg: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
+          icon: <CheckCircle2 className="w-3.5 h-3.5" />,
+          label: 'Completed',
+        };
+      case 'in progress':
+        return {
+          bg: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
+          icon: <Clock className="w-3.5 h-3.5 animate-pulse" />,
+          label: 'In Progress',
+        };
+      case 'resolved':
+        return {
+          bg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+          icon: <CheckCircle2 className="w-3.5 h-3.5" />,
+          label: 'Resolved',
+        };
       default:
         return {
           bg: 'bg-white text-slate-600 border-rose-100',

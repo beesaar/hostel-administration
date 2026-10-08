@@ -31,28 +31,32 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['Student', 'Hostel Manager', 'Admin'], // Only these exact strings are allowed
     default: 'Student'
+  },
+  isActive: {
+    type: Boolean,
+    default: true // Soft deactivation flag — false = cannot log in or access API
   }
 }, {
   timestamps: true // Automatically creates 'createdAt' and 'updatedAt' fields
 });
 
 // 2. The Pre-Save Hook (Automation for Security)
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function () {
   // Prevent double-hashing: If the password wasn't modified, skip to the next step
   if (!this.isModified('password')) {
-    return next();
+    return;
   }
 
   // Generate a 'salt' (random data added to the password to make it uncrackable)
   const salt = await bcrypt.genSalt(10);
-  
+
   // Hash the password with the salt
   this.password = await bcrypt.hash(this.password, salt);
 });
 
 // 3. A Helper Method for Login (We will use this in Step 7)
 // We attach a function directly to the user object to easily compare passwords later
-userSchema.methods.matchPassword = async function(enteredPassword) {
+userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

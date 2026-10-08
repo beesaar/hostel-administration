@@ -7,16 +7,20 @@ export const adminService = {
     return response.data;
   },
 
-  // 2. Fetch all hostel managers (with optional search)
-  getAllManagers: async (search = '') => {
-    const params = search ? { search } : {};
+  // 2. Fetch all hostel managers (with optional search and status filter)
+  getAllManagers: async (search = '', status = '') => {
+    const params = {};
+    if (search) params.search = search;
+    if (status) params.status = status;
     const response = await api.get('/admin/managers', { params });
     return response.data;
   },
 
-  // 3. Fetch all registered students (with optional search)
-  getAllStudents: async (search = '') => {
-    const params = search ? { search } : {};
+  // 3. Fetch all registered students (with optional search and status filter)
+  getAllStudents: async (search = '', status = '') => {
+    const params = {};
+    if (search) params.search = search;
+    if (status) params.status = status;
     const response = await api.get('/admin/students', { params });
     return response.data;
   },
@@ -51,6 +55,12 @@ export const adminService = {
   // 8. Delete a hostel
   deleteHostel: async (id) => {
     const response = await api.delete(`/admin/hostels/${id}`);
+    return response.data;
+  },
+
+  // 9. Toggle user active status (deactivate / reactivate)
+  toggleUserStatus: async (id, isActive) => {
+    const response = await api.patch(`/admin/users/${id}/status`, { isActive });
     return response.data;
   },
 };

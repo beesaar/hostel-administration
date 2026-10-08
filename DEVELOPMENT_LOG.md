@@ -19,7 +19,7 @@ Progress: [███████████████████████
 | **Phase 5** | Admin Frontend Portal & UI Integration | ✅ **Completed** | Aug 6, 2026 |
 | **Phase 6** | Hostel Manager Module (CRUD, Dashboard & Frontend) | ✅ **Completed** | Aug 6, 2026 |
 | **Phase 7** | Room Management Module | ✅ **Completed** | Aug 11, 2026 |
-| **Phase 8** | Student Booking & Allocation System | ⏳ *Next Sprint* | Pending |
+| **Phase 8** | Student Booking & Allocation System | ⏳ *In Progress* | In Progress |
 | **Phase 9** | Complaints, Map, Notices & Image Uploads | ⏳ *Upcoming* | Pending |
 
 ---
@@ -594,3 +594,27 @@ Availability and status transitions were moved to the database layer (Mongoose `
 
 ## Next Sprint
 Student Booking & Room Allocation System
+
+---
+
+# Transition & Ongoing: Rebranding and Phase 8 Start
+
+## Date
+October 6, 2026
+
+## Goal
+Globally rebrand the application to "Unistay". Begin foundational frontend components and logic for Phase 8: Student Booking & Allocation System.
+
+## Frontend Progress
+- **Global Rebranding**:
+  - Renamed document `<title>` to "Unistay".
+  - Updated all authentication pages (`LoginPage.jsx`, `RegisterPage.jsx`) to reflect the new Unistay brand.
+  - Refactored role-based sidebars (`ManagerSidebar.jsx`, `Sidebar.jsx`, `StudentSidebar.jsx`) to display "Unistay".
+- **Student Module Architecture**:
+  - Implemented dynamic logic inside the Student Dashboard. Layout and UI state now adapt conditionally based on whether the active student has successfully booked a room (`accommodationState`).
+
+## Backend Progress
+- Pending API definitions for `Booking` schema.
+
+## Status
+Phase 8 (Student Booking Module) is officially unblocked and **In Progress**. Codebase has been successfully aligned with the "Unistay" branding.

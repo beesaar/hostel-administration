@@ -68,7 +68,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
               </div>
               <div>
                 <h1 className="text-base font-bold text-slate-800 tracking-tight leading-none">
-                  Hostel Admin
+                  Unistay
                 </h1>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-teal-400">
                   Control Center

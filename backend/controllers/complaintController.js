@@ -1,6 +1,7 @@
 const Complaint = require('../models/Complaint');
 const Booking = require('../models/Booking');
 const Hostel = require('../models/Hostel');
+const Notification = require('../models/Notification');
 
 // @desc    Create a new complaint
 // @route   POST /api/complaints
@@ -10,26 +11,52 @@ const createComplaint = async (req, res) => {
     const { hostelId, roomId, title, description } = req.body;
     const studentId = req.user._id;
 
-    // Optional: Validate that the student actually has a booking for this hostel/room
-    // Since complaints usually require an active or past association
-    const booking = await Booking.findOne({
+    if (!hostelId || !title || !description) {
+      return res.status(400).json({ message: 'Please provide hostelId, title, and description.' });
+    }
+
+    // Validate that the student has an active/current accommodation at this hostel/room
+    // Only residents with Approved or Leave_Requested status can file complaints
+    const bookingQuery = {
       student: studentId,
       hostel: hostelId,
-      room: roomId,
-    });
+      status: { $in: ['Approved', 'Leave_Requested'] },
+    };
+    if (roomId) {
+      bookingQuery.room = roomId;
+    }
 
-    if (!booking) {
-      return res.status(403).json({ message: 'You are not associated with this room/hostel.' });
+    const activeBooking = await Booking.findOne(bookingQuery);
+
+    if (!activeBooking) {
+      return res.status(403).json({ message: 'You can only file complaints for your current active accommodation.' });
     }
 
     const complaint = await Complaint.create({
       student: studentId,
       hostel: hostelId,
-      room: roomId,
+      room: roomId || activeBooking.room,
       title,
       description,
       status: 'Pending',
     });
+
+    // Create Notification for the Hostel Manager
+    const hostel = await Hostel.findById(hostelId);
+    if (hostel && hostel.manager) {
+      try {
+        await Notification.create({
+          recipient: hostel.manager,
+          type: 'COMPLAINT_CREATED',
+          title: 'New Complaint Filed',
+          message: `A new complaint "${title}" was filed for ${hostel.name}.`,
+          complaint: complaint._id,
+          isRead: false,
+        });
+      } catch (notifErr) {
+        console.error('Failed to create manager notification on complaint create:', notifErr);
+      }
+    }
 
     res.status(201).json(complaint);
   } catch (error) {
@@ -107,6 +134,22 @@ const updateComplaintStatus = async (req, res) => {
     }
 
     await complaint.save();
+
+    // Create Notification for the Student
+    if (complaint.student) {
+      try {
+        await Notification.create({
+          recipient: complaint.student,
+          type: 'COMPLAINT_UPDATED',
+          title: 'Complaint Status Updated',
+          message: `Your complaint "${complaint.title}" has been updated to "${status}".`,
+          complaint: complaint._id,
+          isRead: false,
+        });
+      } catch (notifErr) {
+        console.error('Failed to create student notification on complaint update:', notifErr);
+      }
+    }
 
     res.status(200).json(complaint);
   } catch (error) {

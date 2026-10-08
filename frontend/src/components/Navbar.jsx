@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import NotificationDropdown from './NotificationDropdown';
 
 export const Navbar = ({ onOpenSidebar }) => {
   const { user, logout } = useAuth();
@@ -25,6 +26,8 @@ export const Navbar = ({ onOpenSidebar }) => {
 
       {/* Right: Quick Indicators & Profile */}
       <div className="flex items-center gap-3 sm:gap-4">
+        <NotificationDropdown />
+
         {/* System Online Status */}
         <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />

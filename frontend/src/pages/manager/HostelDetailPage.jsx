@@ -21,6 +21,7 @@ import Button from '../../components/Button';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import Toast from '../../components/Toast';
+import HostelMap from '../../components/HostelMap';
 
 export const HostelDetailPage = () => {
   const { id } = useParams();
@@ -199,6 +200,44 @@ export const HostelDetailPage = () => {
                 </div>
               )}
             </div>
+
+            {/* Map Display */}
+            {(() => {
+              const coords = hostel.location?.coordinates;
+              const hasValidCoords =
+                coords &&
+                Array.isArray(coords) &&
+                coords.length === 2 &&
+                !isNaN(coords[0]) &&
+                !isNaN(coords[1]) &&
+                (coords[0] !== 0 || coords[1] !== 0);
+
+              return hasValidCoords ? (
+                <div className="mt-3">
+                  <HostelMap
+                    center={[coords[1], coords[0]]}
+                    zoom={16}
+                    markers={[
+                      {
+                        id: hostel._id,
+                        lat: coords[1],
+                        lng: coords[0],
+                        name: hostel.name,
+                        address: hostel.address,
+                        city: hostel.city,
+                      },
+                    ]}
+                    height="250px"
+                  />
+                </div>
+              ) : (
+                <div className="mt-3 p-3 rounded-xl bg-rose-50/50 border border-white/80 text-center">
+                  <p className="text-xs text-slate-400">
+                    No map coordinates set. Edit this hostel to add a location.
+                  </p>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Facilities */}

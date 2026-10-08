@@ -68,7 +68,7 @@ export const RegisterPage = () => {
       if (userProfile.role === 'Hostel Manager') {
         navigate('/manager/dashboard', { replace: true });
       } else {
-        navigate('/dashboard', { replace: true });
+        navigate('/student/dashboard', { replace: true });
       }
     } catch (err) {
       console.error('Registration error:', err);
@@ -99,7 +99,7 @@ export const RegisterPage = () => {
           Create an Account
         </h2>
         <p className="mt-1 text-xs text-slate-400">
-          Join Hostel Hub as a Student or Hostel Manager
+          Join Unistay as a Student or Hostel Manager
         </p>
       </div>
 

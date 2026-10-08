@@ -9,6 +9,7 @@ const {
   rejectHostel,
   deleteUser,
   deleteHostel,
+  toggleUserStatus,
 } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -22,6 +23,7 @@ router.get('/dashboard', getAdminDashboardStats);
 // 2. User Management Routes
 router.get('/managers', getAllManagers);
 router.get('/students', getAllStudents);
+router.patch('/users/:id/status', toggleUserStatus);
 
 // 3. Hostel Verification & Moderation Routes
 router.get('/hostels', getAllHostels);

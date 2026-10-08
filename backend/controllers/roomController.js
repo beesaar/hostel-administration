@@ -83,6 +83,9 @@ const createRoom = async (req, res) => {
       hostel: hostelId, // Enforce the hostel ID from params
     };
 
+    // occupiedBeds is controlled by the booking lifecycle, not manual room creation
+    delete roomData.occupiedBeds;
+
     const room = await Room.create(roomData);
 
     res.status(201).json({
@@ -198,8 +201,8 @@ const updateRoom = async (req, res) => {
 
     // Apply updates (pre-save hook will handle availability and status logic)
     Object.keys(req.body).forEach((key) => {
-      // Don't allow direct update of availableBeds as it's computed
-      if (key !== 'availableBeds' && key !== 'hostel') {
+      // Don't allow direct update of availableBeds (computed) or occupiedBeds (booking-controlled) or hostel
+      if (key !== 'availableBeds' && key !== 'occupiedBeds' && key !== 'hostel') {
           room[key] = req.body[key];
       }
     });
@@ -253,6 +256,40 @@ const deleteRoom = async (req, res) => {
       return res.status(403).json({
         success: false,
         message: 'You do not have permission to delete this room',
+      });
+    }
+
+    // Safe deletion: check for dependent records before deleting
+    const Booking = require('../models/Booking');
+    const Complaint = require('../models/Complaint');
+
+    // Check for active/pending bookings (residents or pending requests)
+    const activeBookingCount = await Booking.countDocuments({
+      room: roomId,
+      status: { $in: ['Pending', 'Approved', 'Leave_Requested'] },
+    });
+    if (activeBookingCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete room ${room.roomNumber}: it has ${activeBookingCount} active/pending booking(s). Please resolve all bookings first.`,
+      });
+    }
+
+    // Check for any historical bookings (Completed, Rejected, Cancelled)
+    const historicalBookingCount = await Booking.countDocuments({ room: roomId });
+    if (historicalBookingCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete room ${room.roomNumber}: it has ${historicalBookingCount} booking record(s) referencing it. Deletion would create orphaned references.`,
+      });
+    }
+
+    // Check for complaints referencing this room
+    const complaintCount = await Complaint.countDocuments({ room: roomId });
+    if (complaintCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete room ${room.roomNumber}: it has ${complaintCount} complaint(s) referencing it. Please resolve all complaints first.`,
       });
     }
     

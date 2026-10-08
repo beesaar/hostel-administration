@@ -21,8 +21,23 @@ export const bookingService = {
     return response.data;
   },
 
-  updateBookingStatus: async (bookingId, status) => {
-    const response = await api.patch(`/bookings/${bookingId}/status`, { status });
+  getManagerResidents: async () => {
+    const response = await api.get('/bookings/manager/residents');
+    return response.data;
+  },
+
+  updateBookingStatus: async (bookingId, status, managerResponse = '') => {
+    const response = await api.patch(`/bookings/${bookingId}/status`, { status, managerResponse });
+    return response.data;
+  },
+
+  requestLeave: async (leaveReason) => {
+    const response = await api.post('/bookings/leave', { leaveReason });
+    return response.data;
+  },
+
+  handleLeaveApproval: async (bookingId, action, managerResponse = '') => {
+    const response = await api.patch(`/bookings/${bookingId}/leave-approval`, { action, managerResponse });
     return response.data;
   }
 };

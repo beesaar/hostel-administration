@@ -28,6 +28,7 @@ import AddRoomPage from './pages/manager/AddRoomPage';
 import EditRoomPage from './pages/manager/EditRoomPage';
 import ManagerBookingsPage from './pages/manager/ManagerBookingsPage';
 import ManagerComplaintsPage from './pages/manager/ManagerComplaintsPage';
+import ManagerResidentsPage from './pages/manager/ManagerResidentsPage';
 
 // Student Imports
 import StudentLayout from './layouts/StudentLayout';
@@ -95,6 +96,7 @@ function App() {
               <Route path="hostels/:hostelId/rooms/new" element={<AddRoomPage />} />
               <Route path="rooms/:roomId/edit" element={<EditRoomPage />} />
               <Route path="bookings" element={<ManagerBookingsPage />} />
+              <Route path="residents" element={<ManagerResidentsPage />} />
               <Route path="complaints" element={<ManagerComplaintsPage />} />
             </Route>
           </Route>

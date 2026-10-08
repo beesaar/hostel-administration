@@ -103,7 +103,7 @@ export const LoginPage = () => {
           <Building2 className="w-8 h-8" />
         </div>
         <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">
-          Hostel Hub
+          Unistay
         </h2>
         <p className="mt-1.5 text-sm text-slate-400">
           Unified Portal for Students, Managers & Administrators

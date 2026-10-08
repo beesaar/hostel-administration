@@ -2,6 +2,38 @@ const Booking = require('../models/Booking');
 const Room = require('../models/Room');
 const Hostel = require('../models/Hostel');
 
+const hydrateBookingHostel = async (booking) => {
+  if (!booking) return booking;
+
+  if (booking.hostel) return booking;
+
+  const roomId = booking.room?._id || booking.room;
+  if (!roomId) return booking;
+
+  const room = booking.room?._id
+    ? booking.room
+    : await Room.findById(roomId).select('hostel');
+
+  if (!room?.hostel) return booking;
+
+  booking.hostel = await Hostel.findById(room.hostel)
+    .populate({
+      path: 'manager',
+      select: 'name phone email'
+    })
+    .select('name address city state pincode type description facilities amenities contactPhone contactEmail manager');
+
+  if (booking.hostel) {
+    await Booking.updateOne(
+      { _id: booking._id },
+      { $set: { hostel: booking.hostel._id } }
+    );
+    booking.hostel = booking.hostel.toObject ? booking.hostel.toObject() : booking.hostel;
+  }
+
+  return booking;
+};
+
 // @desc    Create a new booking
 // @route   POST /api/bookings
 // @access  Private (Student)
@@ -27,13 +59,16 @@ const createBooking = async (req, res) => {
       return res.status(400).json({ message: 'Room is fully occupied or unavailable' });
     }
 
-    // 4. Check if student already has an approved booking anywhere
-    const approvedBooking = await Booking.findOne({
+    // 4. Check if student already has an active accommodation (Approved or Leave_Requested)
+    const activeBooking = await Booking.findOne({
       student: studentId,
-      status: 'Approved'
+      status: { $in: ['Approved', 'Leave_Requested'] }
     });
 
-    if (approvedBooking) {
+    if (activeBooking) {
+      if (activeBooking.status === 'Leave_Requested') {
+        return res.status(400).json({ message: 'You have a pending leave request. Please wait for your manager to process it before booking another room.' });
+      }
       return res.status(400).json({ message: 'You already have an allotted room and cannot book more rooms.' });
     }
 
@@ -55,11 +90,10 @@ const createBooking = async (req, res) => {
       room: roomId,
       status: 'Pending'
     });
-
     res.status(201).json(booking);
   } catch (error) {
     console.error('Error creating booking:', error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(error.name === 'ValidationError' || error.message ? 400 : 500).json({ message: error.message || 'Server Error' });
   }
 };
 
@@ -69,11 +103,22 @@ const createBooking = async (req, res) => {
 const getStudentBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ student: req.user._id })
-      .populate('hostel', 'name city type address')
-      .populate('room', 'roomNumber floor monthlyRent')
+      .populate({
+        path: 'hostel',
+        select: 'name city state type address contactPhone contactEmail manager',
+        populate: {
+          path: 'manager',
+          select: 'name phone email'
+        }
+      })
+      .populate('room', 'roomNumber floor monthlyRent hostel')
       .sort({ createdAt: -1 });
-    
-    res.status(200).json(bookings);
+
+    const hydratedBookings = await Promise.all(
+      bookings.map((booking) => hydrateBookingHostel(booking))
+    );
+
+    res.status(200).json(hydratedBookings);
   } catch (error) {
     console.error('Error fetching student bookings:', error);
     res.status(500).json({ message: 'Server Error' });
@@ -85,8 +130,8 @@ const getStudentBookings = async (req, res) => {
 // @access  Private (Student)
 const getStudentAccommodationStatus = async (req, res) => {
   try {
-    // 1. Check for an Approved booking first
-    let booking = await Booking.findOne({ student: req.user._id, status: 'Approved' })
+    // 1. Check for an Approved or Leave_Requested booking (Active Resident)
+    let booking = await Booking.findOne({ student: req.user._id, status: { $in: ['Approved', 'Leave_Requested'] } })
       .populate({
         path: 'hostel',
         select: 'name address city state type facilities amenities contactPhone contactEmail manager',
@@ -95,28 +140,37 @@ const getStudentAccommodationStatus = async (req, res) => {
           select: 'name phone email'
         }
       })
-      .populate('room', 'roomNumber capacity occupiedBeds availableBeds status floor monthlyRent AC attachedBathroom');
+      .populate('room', 'roomNumber capacity occupiedBeds availableBeds status floor monthlyRent AC attachedBathroom gender hostel');
 
     if (booking) {
+      const hydratedBooking = await hydrateBookingHostel(booking);
       return res.status(200).json({
         state: 'ACTIVE_RESIDENT',
-        booking
+        booking: hydratedBooking
       });
     }
 
-    // 2. If no Approved booking, check for a Pending booking
+    // 3. If no Approved or Leave_Requested booking, check for a Pending booking
     booking = await Booking.findOne({ student: req.user._id, status: 'Pending' })
-      .populate('hostel', 'name address city type')
-      .populate('room', 'roomNumber floor monthlyRent');
+      .populate({
+        path: 'hostel',
+        select: 'name address city state pincode type description facilities amenities contactPhone contactEmail manager',
+        populate: {
+          path: 'manager',
+          select: 'name phone email'
+        }
+      })
+      .populate('room', 'roomNumber capacity occupiedBeds availableBeds status floor monthlyRent AC attachedBathroom gender hostel');
 
     if (booking) {
+      const hydratedBooking = await hydrateBookingHostel(booking);
       return res.status(200).json({
         state: 'PENDING',
-        booking
+        booking: hydratedBooking
       });
     }
 
-    // 3. Otherwise, they have no active room
+    // 4. Otherwise, they have no active room
     return res.status(200).json({
       state: 'NO_ROOM',
       booking: null
@@ -124,6 +178,37 @@ const getStudentAccommodationStatus = async (req, res) => {
   } catch (error) {
     console.error('Error fetching student accommodation status:', error);
     res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Student submits request to leave hostel
+// @route   POST /api/bookings/leave
+// @access  Private (Student)
+const requestLeave = async (req, res) => {
+  try {
+    const { leaveReason } = req.body;
+    
+    if (!leaveReason || !leaveReason.trim()) {
+      return res.status(400).json({ message: 'Please provide a valid reason for leaving the hostel.' });
+    }
+
+    const booking = await Booking.findOne({ student: req.user._id, status: 'Approved' });
+    if (!booking) {
+      return res.status(400).json({ message: 'You do not have an active approved accommodation to leave.' });
+    }
+
+    booking.status = 'Leave_Requested';
+    booking.leaveReason = leaveReason.trim();
+    booking.leaveRequestedAt = Date.now();
+    await booking.save();
+
+    res.status(200).json({
+      message: 'Leave request submitted successfully. Waiting for manager approval.',
+      booking
+    });
+  } catch (error) {
+    console.error('Error submitting leave request:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
 
@@ -139,8 +224,8 @@ const getManagerBookings = async (req, res) => {
     // 2. Find bookings for these hostels
     const bookings = await Booking.find({ hostel: { $in: hostelIds } })
       .populate('student', 'name email phone')
-      .populate('hostel', 'name')
-      .populate('room', 'roomNumber capacity occupiedBeds availableBeds status')
+      .populate('hostel', 'name city type address')
+      .populate('room', 'roomNumber capacity occupiedBeds availableBeds status gender floor monthlyRent')
       .sort({ createdAt: -1 });
 
     res.status(200).json(bookings);
@@ -150,13 +235,39 @@ const getManagerBookings = async (req, res) => {
   }
 };
 
-// @desc    Update booking status
+// @desc    Get current residents in manager's hostels (Approved + Leave_Requested)
+// @route   GET /api/bookings/manager/residents
+// @access  Private (Hostel Manager)
+const getManagerResidents = async (req, res) => {
+  try {
+    // 1. Find all hostels managed by this manager
+    const managedHostels = await Hostel.find({ manager: req.user._id }).select('_id');
+    const hostelIds = managedHostels.map(h => h._id);
+
+    // 2. Find all active residents (Approved or Leave_Requested = still physically in the hostel)
+    const residents = await Booking.find({
+      hostel: { $in: hostelIds },
+      status: { $in: ['Approved', 'Leave_Requested'] },
+    })
+      .populate('student', 'name email phone createdAt')
+      .populate('hostel', 'name city type address')
+      .populate('room', 'roomNumber floor monthlyRent gender capacity occupiedBeds availableBeds status')
+      .sort({ approvedAt: -1 });
+
+    res.status(200).json(residents);
+  } catch (error) {
+    console.error('Error fetching manager residents:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Update booking status (Approve / Reject booking or Process Leave)
 // @route   PATCH /api/bookings/:id/status
 // @access  Private (Hostel Manager)
 const updateBookingStatus = async (req, res) => {
   try {
-    const { status } = req.body;
-    const validStatuses = ['Approved', 'Rejected'];
+    const { status, managerResponse } = req.body;
+    const validStatuses = ['Approved', 'Rejected', 'Completed'];
     
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: 'Invalid status update' });
@@ -173,16 +284,56 @@ const updateBookingStatus = async (req, res) => {
       return res.status(403).json({ message: 'Unauthorized to update this booking' });
     }
 
-    // If already approved/rejected, don't allow changing
+    // Handling Leave_Requested approvals (Status transition to Completed)
+    if (booking.status === 'Leave_Requested') {
+      if (status === 'Completed') {
+        const room = await Room.findById(booking.room);
+        if (room) {
+          room.occupiedBeds = Math.max(0, room.occupiedBeds - 1);
+          await room.save();
+        }
+
+        booking.status = 'Completed';
+        booking.completedAt = Date.now();
+        if (managerResponse) booking.managerResponse = managerResponse;
+        await booking.save();
+
+        return res.status(200).json(booking);
+      } else if (status === 'Approved' || status === 'Rejected') {
+        // Manager rejects leave request: revert status to Approved (active resident)
+        booking.status = 'Approved';
+        if (managerResponse) booking.managerResponse = managerResponse;
+        await booking.save();
+
+        return res.status(200).json(booking);
+      }
+    }
+
+    // Guard: prevent re-processing a booking that is already Completed or Cancelled
+    if (booking.status === 'Completed' || booking.status === 'Cancelled') {
+      return res.status(400).json({ message: `Cannot update booking that is already ${booking.status}` });
+    }
+
+    // If already approved/rejected/completed, don't allow changing
     if (booking.status !== 'Pending') {
       return res.status(400).json({ message: `Cannot update booking that is already ${booking.status}` });
     }
 
     if (status === 'Approved') {
+      // Verify student does not already have another Approved or Leave_Requested booking
+      const existingActive = await Booking.findOne({
+        student: booking.student,
+        status: { $in: ['Approved', 'Leave_Requested'] }
+      });
+      if (existingActive) {
+        return res.status(400).json({ message: 'This student already has an active accommodation (or a pending leave request). Cannot approve another booking.' });
+      }
+
       // Check room availability again before approving
       const room = await Room.findById(booking.room);
       if (room.status === 'Full' || room.availableBeds <= 0) {
          booking.status = 'Rejected'; // Auto reject if full
+         if (managerResponse) booking.managerResponse = managerResponse;
          await booking.save();
          return res.status(400).json({ message: 'Room is full. Booking automatically rejected.' });
       }
@@ -199,6 +350,10 @@ const updateBookingStatus = async (req, res) => {
     }
 
     booking.status = status;
+    if (managerResponse !== undefined) {
+      booking.managerResponse = managerResponse;
+    }
+    
     await booking.save();
 
     res.status(200).json(booking);
@@ -208,10 +363,62 @@ const updateBookingStatus = async (req, res) => {
   }
 };
 
+// @desc    Process student leave request (Approve or Reject leave)
+// @route   PATCH /api/bookings/:id/leave-approval
+// @access  Private (Hostel Manager)
+const handleLeaveApproval = async (req, res) => {
+  try {
+    const { action, managerResponse } = req.body;
+    if (!['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ message: 'Invalid action. Must be approve or reject.' });
+    }
+
+    const booking = await Booking.findById(req.params.id).populate('hostel');
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    if (booking.hostel.manager.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Unauthorized to update this booking' });
+    }
+
+    if (booking.status !== 'Leave_Requested') {
+      return res.status(400).json({ message: 'Booking does not have a pending leave request' });
+    }
+
+    if (action === 'approve') {
+      const room = await Room.findById(booking.room);
+      if (room) {
+        room.occupiedBeds = Math.max(0, room.occupiedBeds - 1);
+        await room.save();
+      }
+
+      booking.status = 'Completed';
+      booking.completedAt = Date.now();
+      if (managerResponse) booking.managerResponse = managerResponse;
+      await booking.save();
+
+      return res.status(200).json({ message: 'Leave request approved. Accommodation ended.', booking });
+    } else {
+      booking.status = 'Approved';
+      if (managerResponse) booking.managerResponse = managerResponse;
+      await booking.save();
+
+      return res.status(200).json({ message: 'Leave request rejected. Student remains active resident.', booking });
+    }
+  } catch (error) {
+    console.error('Error handling leave approval:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 module.exports = {
   createBooking,
   getStudentBookings,
   getStudentAccommodationStatus,
+  requestLeave,
   getManagerBookings,
+  getManagerResidents,
   updateBookingStatus,
+  handleLeaveApproval,
 };

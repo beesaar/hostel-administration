@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Hostel = require('../models/Hostel');
 const Room = require('../models/Room');
+const Booking = require('../models/Booking');
 
 // @desc    Get Admin Dashboard Analytics & Overview Stats
 // @route   GET /api/admin/dashboard
@@ -56,8 +57,11 @@ const getAdminDashboardStats = async (req, res) => {
 // @access  Private (Admin Only)
 const getAllManagers = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, status } = req.query;
     let query = { role: 'Hostel Manager' };
+
+    if (status === 'active') query.isActive = true;
+    if (status === 'inactive') query.isActive = false;
 
     if (search) {
       query.$or = [
@@ -67,12 +71,21 @@ const getAllManagers = async (req, res) => {
       ];
     }
 
-    const managers = await User.find(query).select('-password').sort({ createdAt: -1 });
+    const managers = await User.find(query).select('-password').sort({ createdAt: -1 }).lean();
+
+    // Populate managed hostels for each manager
+    const managerIds = managers.map(m => m._id);
+    const hostels = await Hostel.find({ manager: { $in: managerIds } }).select('name city type status manager');
+
+    const managersWithHostels = managers.map(m => ({
+      ...m,
+      managedHostels: hostels.filter(h => h.manager.toString() === m._id.toString()),
+    }));
 
     res.status(200).json({
       success: true,
-      count: managers.length,
-      managers,
+      count: managersWithHostels.length,
+      managers: managersWithHostels,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server Error', error: error.message });
@@ -84,8 +97,11 @@ const getAllManagers = async (req, res) => {
 // @access  Private (Admin Only)
 const getAllStudents = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, status } = req.query;
     let query = { role: 'Student' };
+
+    if (status === 'active') query.isActive = true;
+    if (status === 'inactive') query.isActive = false;
 
     if (search) {
       query.$or = [
@@ -95,12 +111,78 @@ const getAllStudents = async (req, res) => {
       ];
     }
 
-    const students = await User.find(query).select('-password').sort({ createdAt: -1 });
+    const students = await User.find(query).select('-password').sort({ createdAt: -1 }).lean();
+
+    // Populate active/pending accommodation for each student
+    const studentIds = students.map(s => s._id);
+    const activeBookings = await Booking.find({
+      student: { $in: studentIds },
+      status: { $in: ['Approved', 'Pending', 'Leave_Requested'] },
+    })
+      .populate('hostel', 'name city type')
+      .populate('room', 'roomNumber floor monthlyRent');
+
+    const studentsWithAccommodation = students.map(s => {
+      const activeBooking = activeBookings.find(b => b.student.toString() === s._id.toString());
+      return {
+        ...s,
+        currentAccommodation: activeBooking || null,
+      };
+    });
 
     res.status(200).json({
       success: true,
-      count: students.length,
-      students,
+      count: studentsWithAccommodation.length,
+      students: studentsWithAccommodation,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Toggle user active status (Deactivate / Reactivate)
+// @route   PATCH /api/admin/users/:id/status
+// @access  Private (Admin Only)
+const toggleUserStatus = async (req, res) => {
+  try {
+    const { isActive } = req.body;
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({ success: false, message: 'Please provide a valid isActive status (true/false)' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (user.role === 'Admin') {
+      return res.status(403).json({ success: false, message: 'Cannot modify Admin account status through this endpoint' });
+    }
+
+    // Safety Rule: If deactivating a student, verify they do not have an active approved accommodation
+    if (!isActive && user.role === 'Student') {
+      const activeBooking = await Booking.findOne({ student: user._id, status: 'Approved' });
+      if (activeBooking) {
+        return res.status(400).json({
+          success: false,
+          message: 'Cannot deactivate a student with an active approved accommodation. The accommodation must be ended first.',
+        });
+      }
+    }
+
+    user.isActive = isActive;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: `User ${user.name} has been ${isActive ? 'reactivated' : 'deactivated'} successfully.`,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+      },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server Error', error: error.message });
@@ -264,4 +346,5 @@ module.exports = {
   rejectHostel,
   deleteUser,
   deleteHostel,
+  toggleUserStatus,
 };

@@ -1,11 +1,11 @@
-# 🏰 Hostel Administration System — Master Project Document
+# 🏰 Unistay — Master Project Document
 ### MCA Mini Project Documentation & Technical Reference Manual
 
 ---
 
 ## 📌 1. Project Synopsis & Overview
 
-The **Hostel Administration System** is a full-stack web application developed using the **MERN (MongoDB Atlas, Express.js, React, Node.js)** stack. It addresses the real-world operational challenges of hostel property onboarding, room allocation, bed management, student admissions, complaints resolution, and administrative moderation.
+**Unistay** is a full-stack web application developed using the **MERN (MongoDB Atlas, Express.js, React, Node.js)** stack. It addresses the real-world operational challenges of hostel property onboarding, room allocation, bed management, student admissions, complaints resolution, and administrative moderation.
 
 ### Core System Objectives:
 1. **Centralized Platform Administration**: Master Admin control center for monitoring platform-wide metrics, viewing verified managers/students, and moderating hostel property listings.
@@ -19,7 +19,7 @@ The **Hostel Administration System** is a full-stack web application developed u
 ## 📊 2. Overall Progress Dashboard
 
 ```text
-Project Completion: [██████████████████████████░░░░░░░░░░░░░░░░░░░░] 55%
+Project Completion: [██████████████████████████████████████░░░░░░░░░] 77%
 ```
 
 | Phase | Milestone / Module | Status | Deliverables |
@@ -29,10 +29,10 @@ Project Completion: [███████████████████�
 | **3** | Authentication & RBAC Engine | ✅ **Completed** | `User` model, `bcrypt` hashing, JWT access tokens, `protect` & `authorize` middleware. |
 | **4** | Admin Backend Module | ✅ **Completed** | `Hostel` model (geospatial index), `adminController`, moderation APIs, aggregation stats. |
 | **5** | Admin Frontend Portal | ✅ **Completed** | Admin Login, Dashboard, Managers List, Students List, Hostels Directory, Pending Approvals, Protected Routes. |
-| **6** | Hostel Manager Module | ⏳ *Next Sprint* | Manager Dashboard, Hostel CRUD, Room Schema, Bed Allocation, Pricing. |
-| **7** | Student Booking System | ⏳ *Upcoming* | Student Portal, Hostel Browsing, Room Booking Requests, Status Tracking. |
-| **8** | Leaflet Map Integration | ⏳ *Upcoming* | React Leaflet map view, OpenStreetMap pins, Geolocation filtering. |
-| **9** | Complaints & Image Uploads | ⏳ *Upcoming* | Multer file upload engine, Complaint lodging, Manager resolution. |
+| **6** | Hostel Manager Module | ✅ **Completed** | Manager Dashboard, Hostel CRUD. |
+| **7** | Room Management Module | ✅ **Completed** | Room Schema, Bed Allocation, Pricing, Availability Logic. |
+| **8** | Student Booking & Allocation System | ⏳ *In Progress* | Student Portal, Hostel Browsing, Room Booking Requests, Status Tracking. |
+| **9** | Complaints, Map, Notices & Image Uploads | ⏳ *Upcoming* | React Leaflet, Multer file upload, Complaint lodging, Manager resolution. |
 
 ---
 
@@ -218,20 +218,13 @@ npm run dev
 
 ---
 
-## 🔮 9. Next Sprints Roadmap (Phases 6 – 9)
+## 🔮 9. Next Sprints Roadmap (Phases 8 – 9)
 
-* **Phase 6: Hostel Manager Module**
-  * Manager Dashboard (`/manager/dashboard`).
-  * Create & Update Hostel Profile.
-  * Room Schema (`Room.js`: roomNumber, roomType, capacity, occupiedBeds, pricePerMonth, status).
-  * Room Management & Bed Allocation UI.
-* **Phase 7: Student Portal & Accommodation Booking**
-  * Student Dashboard (`/student/dashboard`).
+* **Phase 8: Student Booking & Allocation System**
+  * Student Dashboard (`/student/dashboard`) logic.
   * Explore Hostels with filters (City, Price, Gender, Amenities).
   * Booking Schema & Request Workflow (`Booking.js`).
-* **Phase 8: Interactive Map Engine (Leaflet & OpenStreetMap)**
-  * Geolocation map rendering hostel pins.
-  * Distance-based hostel discovery.
-* **Phase 9: Complaint Management & File Upload Engine**
+* **Phase 9: Map, Complaints & Image Uploads**
+  * Interactive Map Engine (Leaflet & OpenStreetMap) for hostel discovery.
   * Multer storage for hostel images & student ID proof.
   * Complaint lodging and status resolution lifecycle.

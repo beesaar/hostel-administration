@@ -29,6 +29,7 @@ app.use('/api/manager', require('./routes/roomRoutes'));
 app.use('/api/student', require('./routes/studentRoutes'));
 app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/complaints', require('./routes/complaintRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // 7. Define Server Port & Start Server
 const PORT = process.env.PORT || 5000;

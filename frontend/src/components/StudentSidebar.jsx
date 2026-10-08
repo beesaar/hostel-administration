@@ -18,6 +18,7 @@ export const StudentSidebar = ({ isOpen, onClose, accommodationState }) => {
   const getNavItems = () => {
     const baseItems = [
       { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
+      { label: 'Explore Hostels', path: '/student/hostels', icon: Search },
     ];
 
     if (accommodationState === 'ACTIVE_RESIDENT') {
@@ -39,7 +40,6 @@ export const StudentSidebar = ({ isOpen, onClose, accommodationState }) => {
     // Default to NO_ROOM (or safe fallback if undefined)
     return [
       ...baseItems,
-      { label: 'Discover Hostels', path: '/student/hostels', icon: Search },
       { label: 'My Bookings', path: '/student/bookings', icon: CalendarDays },
       { label: 'My Complaints', path: '/student/complaints', icon: MessageSquareWarning },
     ];
@@ -72,10 +72,10 @@ export const StudentSidebar = ({ isOpen, onClose, accommodationState }) => {
               </div>
               <div>
                 <h1 className="text-base font-bold text-slate-800 tracking-tight leading-none">
-                  Student Portal
+                  Unistay
                 </h1>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-violet-400">
-                  Hostel Discovery
+                  Student Portal
                 </span>
               </div>
             </div>

@@ -138,10 +138,18 @@ const createHostel = async (req, res) => {
     };
 
     // Set coordinates if provided
-    if (latitude && longitude) {
+    if (latitude !== undefined && longitude !== undefined && latitude !== '' && longitude !== '') {
+      const latNum = parseFloat(latitude);
+      const lngNum = parseFloat(longitude);
+      if (isNaN(latNum) || latNum < -90 || latNum > 90) {
+        return res.status(400).json({ success: false, message: 'Latitude must be a valid number between -90 and 90.' });
+      }
+      if (isNaN(lngNum) || lngNum < -180 || lngNum > 180) {
+        return res.status(400).json({ success: false, message: 'Longitude must be a valid number between -180 and 180.' });
+      }
       hostelData.location = {
         type: 'Point',
-        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+        coordinates: [lngNum, latNum],
       };
     }
 
@@ -222,10 +230,18 @@ const updateHostel = async (req, res) => {
     if (images !== undefined) hostel.images = images;
 
     // Update coordinates if provided
-    if (latitude && longitude) {
+    if (latitude !== undefined && longitude !== undefined && latitude !== '' && longitude !== '') {
+      const latNum = parseFloat(latitude);
+      const lngNum = parseFloat(longitude);
+      if (isNaN(latNum) || latNum < -90 || latNum > 90) {
+        return res.status(400).json({ success: false, message: 'Latitude must be a valid number between -90 and 90.' });
+      }
+      if (isNaN(lngNum) || lngNum < -180 || lngNum > 180) {
+        return res.status(400).json({ success: false, message: 'Longitude must be a valid number between -180 and 180.' });
+      }
       hostel.location = {
         type: 'Point',
-        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+        coordinates: [lngNum, latNum],
       };
     }
 
@@ -265,6 +281,38 @@ const deleteHostel = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'Hostel not found or you do not have permission to delete it',
+      });
+    }
+
+    // Safe deletion: check for dependent records before deleting
+    const Room = require('../models/Room');
+    const Booking = require('../models/Booking');
+    const Complaint = require('../models/Complaint');
+
+    // Check for rooms belonging to this hostel
+    const roomCount = await Room.countDocuments({ hostel: hostel._id });
+    if (roomCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete hostel '${hostel.name}': it has ${roomCount} room(s). Please delete all rooms first.`,
+      });
+    }
+
+    // Check for bookings referencing this hostel
+    const bookingCount = await Booking.countDocuments({ hostel: hostel._id });
+    if (bookingCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete hostel '${hostel.name}': it has ${bookingCount} booking record(s) referencing it. Deletion would create orphaned references.`,
+      });
+    }
+
+    // Check for complaints referencing this hostel
+    const complaintCount = await Complaint.countDocuments({ hostel: hostel._id });
+    if (complaintCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete hostel '${hostel.name}': it has ${complaintCount} complaint(s) referencing it. Please resolve all complaints first.`,
       });
     }
 

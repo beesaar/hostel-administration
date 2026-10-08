@@ -13,7 +13,13 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all required fields: name, email, password, phone' });
     }
 
-    // 2. Check if user already exists
+    // 2. Prevent Admin registration through the public endpoint (security: privilege escalation prevention)
+    const allowedRoles = ['Student', 'Hostel Manager'];
+    if (role && !allowedRoles.includes(role)) {
+      return res.status(403).json({ message: `Public registration is not allowed for the role '${role}'. Only Student and Hostel Manager registrations are permitted.` });
+    }
+
+    // 3. Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists with this email' });
@@ -62,6 +68,10 @@ const loginUser = async (req, res) => {
 
     // 3. Verify user existence and compare password hash
     if (user && (await user.matchPassword(password))) {
+      if (user.isActive === false) {
+        return res.status(401).json({ message: 'Account is deactivated. Please contact administration.' });
+      }
+
       res.status(200).json({
         _id: user._id,
         name: user.name,

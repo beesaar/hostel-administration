@@ -29,19 +29,94 @@ const MyRoomPage = () => {
   }
 
   if (accommodationState === 'PENDING') {
+    const pendingHostel = accommodationBooking?.hostel;
+    const pendingRoom = accommodationBooking?.room;
+    const pendingManager = pendingHostel?.manager;
+
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
-        <div className="p-4 bg-amber-100 text-amber-500 rounded-full mb-2">
-          <CalendarDays className="w-10 h-10" />
+      <div className="space-y-6 max-w-5xl mx-auto">
+        <div className="flex flex-col items-center justify-center text-center space-y-4">
+          <div className="p-4 bg-amber-100 text-amber-500 rounded-full">
+            <CalendarDays className="w-10 h-10" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800">Booking Pending</h1>
+            <p className="text-slate-500 max-w-md">
+              Your room booking is still awaiting manager approval.
+            </p>
+          </div>
+          <Link to="/student/bookings" className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+            <CalendarDays className="w-4 h-4" />
+            View My Booking
+          </Link>
         </div>
-        <h1 className="text-2xl font-bold text-slate-800">Booking Pending</h1>
-        <p className="text-slate-500 max-w-md">
-          Your room booking is still awaiting manager approval.
-        </p>
-        <Link to="/student/bookings" className="mt-4 inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors">
-          <CalendarDays className="w-4 h-4" />
-          View My Booking
-        </Link>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white/70 border border-white p-6 rounded-3xl shadow-sm">
+            <h2 className="text-xl font-bold text-slate-800 mb-5 flex items-center gap-3">
+              <Building2 className="w-5 h-5 text-emerald-600" />
+              Hostel Information
+            </h2>
+            <div className="space-y-4 text-sm">
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hostel Name</p>
+                <p className="text-lg font-bold text-slate-800">{pendingHostel?.name || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Address</p>
+                <p className="text-slate-700">{pendingHostel?.address || 'N/A'}</p>
+                <p className="text-slate-500">
+                  {pendingHostel?.city || ''}{pendingHostel?.state ? `, ${pendingHostel.state}` : ''}{pendingHostel?.pincode ? ` - ${pendingHostel.pincode}` : ''}
+                </p>
+              </div>
+              {pendingHostel?.type && (
+                <p><span className="text-slate-400">Type: </span><span className="font-semibold text-slate-700">{pendingHostel.type} Hostel</span></p>
+              )}
+              {pendingHostel?.contactPhone && (
+                <a href={`tel:${pendingHostel.contactPhone}`} className="block text-violet-700 hover:text-violet-800 font-medium">
+                  Phone: {pendingHostel.contactPhone}
+                </a>
+              )}
+              {pendingHostel?.contactEmail && (
+                <a href={`mailto:${pendingHostel.contactEmail}`} className="block text-violet-700 hover:text-violet-800 break-all">
+                  Email: {pendingHostel.contactEmail}
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-slate-800 border border-slate-700 p-6 rounded-3xl text-white shadow-lg shadow-slate-800/20">
+            <h2 className="text-xl font-bold mb-5 flex items-center gap-3">
+              <UserCircle className="w-5 h-5 text-violet-400" />
+              Hostel Manager
+            </h2>
+            <div className="space-y-4 text-sm">
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Name</p>
+                <p className="font-semibold">{pendingManager?.name || 'Contact Administration'}</p>
+              </div>
+              {pendingManager?.phone && (
+                <a href={`tel:${pendingManager.phone}`} className="flex items-center gap-2 text-violet-300 hover:text-white">
+                  <Phone className="w-4 h-4" /> {pendingManager.phone}
+                </a>
+              )}
+              {pendingManager?.email && (
+                <a href={`mailto:${pendingManager.email}`} className="flex items-center gap-2 text-violet-300 hover:text-white break-all">
+                  <Mail className="w-4 h-4" /> {pendingManager.email}
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/70 border border-white p-6 rounded-3xl shadow-sm">
+          <h2 className="text-xl font-bold text-slate-800 mb-5">Requested Room</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+            <div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Room Number</p><p className="font-semibold text-slate-800">{pendingRoom?.roomNumber || 'N/A'}</p></div>
+            <div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Floor</p><p className="font-semibold text-slate-800">{pendingRoom?.floor || 'N/A'}</p></div>
+            <div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Monthly Rent</p><p className="font-semibold text-slate-800">₹{pendingRoom?.monthlyRent || 'N/A'}</p></div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -161,7 +236,9 @@ const MyRoomPage = () => {
                     <MapPin className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
                     <div>
                       <p className="text-base font-medium text-slate-800">{hostel?.address}</p>
-                      <p className="text-sm text-slate-500">{hostel?.city}</p>
+                      <p className="text-sm text-slate-500">
+                        {hostel?.city}{hostel?.state ? `, ${hostel.state}` : ''}{hostel?.pincode ? ` - ${hostel.pincode}` : ''}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -169,6 +246,22 @@ const MyRoomPage = () => {
                   <div>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hostel Type</p>
                     <p className="text-base font-medium text-slate-800">{hostel.type} Hostel</p>
+                  </div>
+                )}
+                {hostel?.contactPhone && (
+                  <div>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hostel Contact</p>
+                    <a href={`tel:${hostel.contactPhone}`} className="text-base font-medium text-violet-700 hover:text-violet-800">
+                      {hostel.contactPhone}
+                    </a>
+                  </div>
+                )}
+                {hostel?.contactEmail && (
+                  <div>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hostel Email</p>
+                    <a href={`mailto:${hostel.contactEmail}`} className="text-base font-medium text-violet-700 hover:text-violet-800 break-all">
+                      {hostel.contactEmail}
+                    </a>
                   </div>
                 )}
               </div>
@@ -233,6 +326,21 @@ const MyRoomPage = () => {
                       <Mail className="w-4 h-4" />
                       Email Manager
                     </a>
+                  </div>
+                )}
+                {(hostel?.contactPhone || hostel?.contactEmail) && (
+                  <div className="pt-2 border-t border-white/10">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Hostel Contact</p>
+                    {hostel.contactPhone && (
+                      <a href={`tel:${hostel.contactPhone}`} className="block text-sm text-violet-300 hover:text-white">
+                        {hostel.contactPhone}
+                      </a>
+                    )}
+                    {hostel.contactEmail && (
+                      <a href={`mailto:${hostel.contactEmail}`} className="block text-sm text-violet-300 hover:text-white break-all">
+                        {hostel.contactEmail}
+                      </a>
+                    )}
                   </div>
                 )}
               </div>

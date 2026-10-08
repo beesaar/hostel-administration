@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Button from './Button';
 import FacilitySelector from './FacilitySelector';
+import HostelMap from './HostelMap';
 
 const HOSTEL_TYPES = ['Boys', 'Girls', 'Co-ed'];
 
@@ -245,6 +246,33 @@ export const HostelForm = ({
               onChange={handleChange}
               placeholder="e.g. 77.5946"
               className={inputClass}
+            />
+          </div>
+
+          {/* Interactive Map Location Picker */}
+          <div className="md:col-span-2 pt-2">
+            <label className="text-xs font-semibold text-slate-700 mb-2 block">
+              Hostel Location Pinpoint (Click on map to select location)
+            </label>
+            <HostelMap
+              height="280px"
+              center={
+                formData.latitude && formData.longitude && !isNaN(formData.latitude) && !isNaN(formData.longitude)
+                  ? [parseFloat(formData.latitude), parseFloat(formData.longitude)]
+                  : [12.9716, 77.5946]
+              }
+              pickerPosition={
+                formData.latitude && formData.longitude && !isNaN(formData.latitude) && !isNaN(formData.longitude)
+                  ? [parseFloat(formData.latitude), parseFloat(formData.longitude)]
+                  : null
+              }
+              onLocationSelect={({ latitude, longitude }) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  latitude: latitude.toString(),
+                  longitude: longitude.toString(),
+                }));
+              }}
             />
           </div>
         </div>

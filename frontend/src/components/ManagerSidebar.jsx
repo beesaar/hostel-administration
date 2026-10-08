@@ -9,6 +9,7 @@ import {
   LogOut,
   X,
   MessageSquareWarning,
+  Users,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,6 +21,7 @@ export const ManagerSidebar = ({ isOpen, onClose }) => {
     { label: 'My Hostels', path: '/manager/hostels', icon: Building2 },
     { label: 'Add New Hostel', path: '/manager/hostels/new', icon: PlusCircle },
     { label: 'Booking Requests', path: '/manager/bookings', icon: CalendarDays },
+    { label: 'Residents', path: '/manager/residents', icon: Users },
     { label: 'Complaints', path: '/manager/complaints', icon: MessageSquareWarning },
   ];
 
@@ -48,10 +50,10 @@ export const ManagerSidebar = ({ isOpen, onClose }) => {
               </div>
               <div>
                 <h1 className="text-base font-bold text-slate-800 tracking-tight leading-none">
-                  Manager Portal
+                  Unistay
                 </h1>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-cyan-400">
-                  Hostel Management
+                  Manager Portal
                 </span>
               </div>
             </div>

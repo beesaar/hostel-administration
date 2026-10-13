@@ -120,7 +120,7 @@ const StudentHostelDetailPage = () => {
         {hostel.images && hostel.images.length > 0 && (
           <div className="h-64 sm:h-80 w-full overflow-hidden relative bg-slate-100 border-b border-white">
             <img
-              src={hostel.images[0]}
+              src={`${import.meta.env.VITE_API_URL}/hostels/${hostel._id}/images/${hostel.images[0]._id}`}
               alt={hostel.name}
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -132,7 +132,7 @@ const StudentHostelDetailPage = () => {
                 {hostel.images.slice(1, 4).map((img, i) => (
                   <img
                     key={i}
-                    src={img}
+                    src={`${import.meta.env.VITE_API_URL}/hostels/${hostel._id}/images/${img._id}`}
                     alt={`${hostel.name} ${i + 2}`}
                     className="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-md cursor-pointer hover:scale-105 transition-transform"
                     onError={(e) => {

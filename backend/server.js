@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db'); // Import the DB connection
@@ -16,13 +17,34 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 5. Basic Health Check Route
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Hostel Administration API is running smoothly!' });
-});
+const mongoose = require('mongoose');
+
+// 5. Comprehensive Health Check Endpoints (for Render keep-awake ping / cron jobs)
+const healthCheckHandler = (req, res) => {
+  const dbStatusMap = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting',
+  };
+  const isDbConnected = mongoose.connection.readyState === 1;
+
+  res.status(isDbConnected ? 200 : 503).json({
+    status: isDbConnected ? 'healthy' : 'degraded',
+    uptimeSeconds: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+    database: dbStatusMap[mongoose.connection.readyState] || 'unknown',
+    message: 'Hostel Administration API is active and running smoothly!',
+  });
+};
+
+app.get('/', healthCheckHandler);
+app.get('/health', healthCheckHandler);
+app.get('/api/health', healthCheckHandler);
 
 // 6. Mount API Routes
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api', require('./routes/publicRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/manager', require('./routes/managerRoutes'));
 app.use('/api/manager', require('./routes/roomRoutes'));

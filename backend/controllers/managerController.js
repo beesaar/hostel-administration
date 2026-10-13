@@ -1,4 +1,9 @@
 const Hostel = require('../models/Hostel');
+const Room = require('../models/Room');
+const Booking = require('../models/Booking');
+const Complaint = require('../models/Complaint');
+const fs = require('fs');
+const path = require('path');
 
 // @desc    Get Manager Dashboard Stats (hostel counts by status)
 // @route   GET /api/manager/dashboard
@@ -328,6 +333,76 @@ const deleteHostel = async (req, res) => {
   }
 };
 
+// @desc    Upload images for a hostel
+// @route   POST /api/manager/hostels/:id/images
+// @access  Private (Hostel Manager Only)
+const uploadHostelImages = async (req, res) => {
+  try {
+    const hostel = await Hostel.findOne({ _id: req.params.id, manager: req.user._id });
+    if (!hostel) {
+      return res.status(404).json({ success: false, message: 'Hostel not found or unauthorized' });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: 'No images uploaded' });
+    }
+
+    const newImages = req.files.map(file => ({
+      data: file.buffer,
+      contentType: file.mimetype,
+      filename: file.originalname
+    }));
+    
+    hostel.images.push(...newImages);
+    await hostel.save();
+
+    // Do not send huge buffer back to client
+    const safeImages = hostel.images.map(img => ({
+      _id: img._id,
+      filename: img.filename,
+      contentType: img.contentType
+    }));
+
+    res.status(200).json({ success: true, message: 'Images uploaded successfully', images: safeImages });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Delete a specific image from a hostel
+// @route   DELETE /api/manager/hostels/:id/images/:imageId
+// @access  Private (Hostel Manager Only)
+const deleteHostelImage = async (req, res) => {
+  try {
+    const { id, imageId } = req.params;
+    const hostel = await Hostel.findOne({ _id: id, manager: req.user._id });
+    
+    if (!hostel) {
+      return res.status(404).json({ success: false, message: 'Hostel not found or unauthorized' });
+    }
+
+    const imageIndex = hostel.images.findIndex(img => img._id.toString() === imageId);
+
+    if (imageIndex === -1) {
+      return res.status(404).json({ success: false, message: 'Image not found in this hostel' });
+    }
+
+    // Remove from DB array
+    hostel.images.splice(imageIndex, 1);
+    await hostel.save();
+
+    const safeImages = hostel.images.map(img => ({
+      _id: img._id,
+      filename: img.filename,
+      contentType: img.contentType
+    }));
+
+    res.status(200).json({ success: true, message: 'Image deleted successfully', images: safeImages });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
   getManagerDashboard,
   getMyHostels,
@@ -335,4 +410,6 @@ module.exports = {
   createHostel,
   updateHostel,
   deleteHostel,
+  uploadHostelImages,
+  deleteHostelImage,
 };

@@ -95,10 +95,16 @@ const hostelSchema = new mongoose.Schema(
       type: [String],
       default: ['WiFi', 'CCTV', 'Water Purifier', '24/7 Security'],
     },
-    images: {
-      type: [String],
-      default: [],
-    },
+    images: [
+      {
+        data: {
+          type: Buffer,
+          select: false,
+        },
+        contentType: String,
+        filename: String,
+      }
+    ],
   },
   {
     timestamps: true,

@@ -14,6 +14,10 @@ import {
   Pencil,
   Trash2,
   Calendar,
+  ImagePlus,
+  Image as ImageIcon,
+  Upload,
+  X,
 } from 'lucide-react';
 import { managerService } from '../../services/managerService';
 import StatusBadge from '../../components/StatusBadge';
@@ -31,6 +35,7 @@ export const HostelDetailPage = () => {
   const [error, setError] = useState(null);
   const [toast, setToast] = useState({ message: '', type: 'success' });
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, loading: false });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     const fetchHostel = async () => {
@@ -63,6 +68,45 @@ export const HostelDetailPage = () => {
       });
     } finally {
       setDeleteDialog({ isOpen: false, loading: false });
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('images', files[i]);
+    }
+
+    setUploadingImage(true);
+    try {
+      const res = await managerService.uploadHostelImages(id, formData);
+      if (res.success) {
+        setHostel((prev) => ({ ...prev, images: res.images }));
+        setToast({ message: 'Images uploaded successfully', type: 'success' });
+      }
+    } catch (err) {
+      setToast({ message: err.response?.data?.message || 'Failed to upload images', type: 'error' });
+    } finally {
+      setUploadingImage(false);
+      // Reset input
+      e.target.value = '';
+    }
+  };
+
+  const handleDeleteImage = async (imageId) => {
+    if (!window.confirm('Are you sure you want to delete this image?')) return;
+    
+    try {
+      const res = await managerService.deleteHostelImage(id, imageId);
+      if (res.success) {
+        setHostel((prev) => ({ ...prev, images: res.images }));
+        setToast({ message: 'Image deleted', type: 'success' });
+      }
+    } catch (err) {
+      setToast({ message: err.response?.data?.message || 'Failed to delete image', type: 'error' });
     }
   };
 
@@ -274,6 +318,58 @@ export const HostelDetailPage = () => {
               </ol>
             </div>
           )}
+
+          {/* Hostel Images */}
+          <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-rose-400" /> Hostel Images ({hostel.images?.length || 0})
+              </h3>
+              <div className="relative">
+                <input 
+                  type="file" 
+                  multiple 
+                  accept="image/png, image/jpeg, image/jpg, image/webp" 
+                  onChange={handleImageUpload} 
+                  disabled={uploadingImage}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                />
+                <Button type="button" variant="outline" size="sm" icon={uploadingImage ? LoadingSpinner : Upload} disabled={uploadingImage}>
+                  {uploadingImage ? 'Uploading...' : 'Upload Images'}
+                </Button>
+              </div>
+            </div>
+
+            {hostel.images && hostel.images.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {hostel.images.map((img) => (
+                  <div key={img._id} className="relative group rounded-xl overflow-hidden aspect-square border border-slate-200 bg-white shadow-sm">
+                    <img 
+                      src={`${import.meta.env.VITE_API_URL}/hostels/${hostel._id}/images/${img._id}`} 
+                      alt={img.filename} 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button 
+                        onClick={() => handleDeleteImage(img._id)}
+                        className="p-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors shadow-lg"
+                        title="Delete image"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 rounded-xl bg-white border border-slate-100 text-center flex flex-col items-center gap-2">
+                <ImagePlus className="w-8 h-8 text-slate-300" />
+                <p className="text-xs text-slate-400">
+                  No images uploaded yet. Upload images to showcase your hostel.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Column: Quick Stats */}

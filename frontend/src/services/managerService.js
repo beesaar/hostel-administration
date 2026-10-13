@@ -39,4 +39,20 @@ export const managerService = {
     const response = await api.delete(`/manager/hostels/${id}`);
     return response.data;
   },
+
+  // 7. Upload hostel images
+  uploadHostelImages: async (id, formData) => {
+    const response = await api.post(`/manager/hostels/${id}/images`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  // 8. Delete a hostel image
+  deleteHostelImage: async (id, imageId) => {
+    const response = await api.delete(`/manager/hostels/${id}/images/${imageId}`);
+    return response.data;
+  },
 };

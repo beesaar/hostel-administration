@@ -19,6 +19,7 @@ export const StudentHostelCard = ({ hostel }) => {
   ];
 
   const firstImage = hostel.images && hostel.images.length > 0 ? hostel.images[0] : null;
+  const hasImage = Boolean(firstImage);
   const imageCount = hostel.images?.length || 0;
 
   return (

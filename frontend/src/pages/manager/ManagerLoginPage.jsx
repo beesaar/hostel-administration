@@ -33,7 +33,7 @@ export const ManagerLoginPage = () => {
     } catch (err) {
       console.error('Login error:', err);
       if (!err.response) {
-        setError('Cannot connect to backend server (http://localhost:5000). Please start the backend server.');
+        setError('Cannot connect to backend server. Please verify the backend is online and accessible.');
       } else {
         setError(
           err.response?.data?.message || 'Invalid email or password. Please try again.'

@@ -3,6 +3,7 @@ import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { ArrowLeft, MapPin, BedDouble, CheckCircle2, User, Building2, Tag, IndianRupee, Clock, Navigation } from 'lucide-react';
 import { studentService } from '../../services/studentService';
 import { bookingService } from '../../services/bookingService';
+import { getHostelImageUrl } from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Toast from '../../components/Toast';
 import HostelMap from '../../components/HostelMap';
@@ -120,7 +121,7 @@ const StudentHostelDetailPage = () => {
         {hostel.images && hostel.images.length > 0 && (
           <div className="h-64 sm:h-80 w-full overflow-hidden relative bg-slate-100 border-b border-white">
             <img
-              src={`${import.meta.env.VITE_API_URL}/hostels/${hostel._id}/images/${hostel.images[0]._id}`}
+              src={getHostelImageUrl(hostel._id, hostel.images[0]._id)}
               alt={hostel.name}
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -132,7 +133,7 @@ const StudentHostelDetailPage = () => {
                 {hostel.images.slice(1, 4).map((img, i) => (
                   <img
                     key={i}
-                    src={`${import.meta.env.VITE_API_URL}/hostels/${hostel._id}/images/${img._id}`}
+                    src={getHostelImageUrl(hostel._id, img._id)}
                     alt={`${hostel.name} ${i + 2}`}
                     className="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-md cursor-pointer hover:scale-105 transition-transform"
                     onError={(e) => {

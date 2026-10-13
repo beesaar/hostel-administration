@@ -73,7 +73,7 @@ export const RegisterPage = () => {
     } catch (err) {
       console.error('Registration error:', err);
       if (!err.response) {
-        setError('Cannot connect to backend server (http://localhost:5000). Please ensure server is running.');
+        setError('Cannot connect to backend server. Please verify the backend is online and accessible.');
       } else {
         setError(
           err.response?.data?.message || 'Registration failed. Please verify your details.'

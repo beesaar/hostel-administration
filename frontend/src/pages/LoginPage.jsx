@@ -65,7 +65,7 @@ export const LoginPage = () => {
     } catch (err) {
       console.error('Login error:', err);
       if (!err.response) {
-        setError('Cannot connect to backend server (http://localhost:5000). Please verify the server is running.');
+        setError('Cannot connect to backend server. Please verify the backend is online and accessible.');
       } else {
         setError(
           err.response?.data?.message || 'Invalid email or password. Please check your credentials.'

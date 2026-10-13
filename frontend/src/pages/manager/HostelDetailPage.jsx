@@ -20,6 +20,7 @@ import {
   X,
 } from 'lucide-react';
 import { managerService } from '../../services/managerService';
+import { getHostelImageUrl } from '../../services/api';
 import StatusBadge from '../../components/StatusBadge';
 import Button from '../../components/Button';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -345,7 +346,7 @@ export const HostelDetailPage = () => {
                 {hostel.images.map((img) => (
                   <div key={img._id} className="relative group rounded-xl overflow-hidden aspect-square border border-slate-200 bg-white shadow-sm">
                     <img 
-                      src={`${import.meta.env.VITE_API_URL}/hostels/${hostel._id}/images/${img._id}`} 
+                      src={getHostelImageUrl(hostel._id, img._id)} 
                       alt={img.filename} 
                       className="w-full h-full object-cover"
                     />

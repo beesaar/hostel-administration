@@ -1,8 +1,14 @@
 import axios from 'axios';
 
+// Resolved base URL for backend API
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+// Helper to construct hostel image URLs
+export const getHostelImageUrl = (hostelId, imageId) => `${API_BASE_URL}/hostels/${hostelId}/images/${imageId}`;
+
 // Base Axios instance configured for Hostel Administration backend
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },

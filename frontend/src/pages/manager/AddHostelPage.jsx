@@ -16,8 +16,16 @@ export const AddHostelPage = () => {
     setToast({ message: '', type: 'success' });
 
     try {
-      const res = await managerService.createHostel(formData);
+      const { imageFiles, ...restData } = formData;
+      const res = await managerService.createHostel(restData);
       if (res.success) {
+        if (imageFiles && imageFiles.length > 0 && res.hostel?._id) {
+          const imgFormData = new FormData();
+          for (let i = 0; i < imageFiles.length; i++) {
+            imgFormData.append('images', imageFiles[i]);
+          }
+          await managerService.uploadHostelImages(res.hostel._id, imgFormData);
+        }
         setToast({ message: res.message, type: 'success' });
         // Navigate to My Hostels after a short delay so user sees the toast
         setTimeout(() => navigate('/manager/hostels'), 1500);

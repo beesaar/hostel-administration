@@ -39,8 +39,16 @@ export const EditHostelPage = () => {
     setToast({ message: '', type: 'success' });
 
     try {
-      const res = await managerService.updateHostel(id, formData);
+      const { imageFiles, ...restData } = formData;
+      const res = await managerService.updateHostel(id, restData);
       if (res.success) {
+        if (imageFiles && imageFiles.length > 0) {
+          const imgFormData = new FormData();
+          for (let i = 0; i < imageFiles.length; i++) {
+            imgFormData.append('images', imageFiles[i]);
+          }
+          await managerService.uploadHostelImages(id, imgFormData);
+        }
         setToast({ message: res.message, type: 'success' });
         setTimeout(() => navigate('/manager/hostels'), 1500);
       }

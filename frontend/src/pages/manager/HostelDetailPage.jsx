@@ -37,6 +37,7 @@ export const HostelDetailPage = () => {
   const [toast, setToast] = useState({ message: '', type: 'success' });
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, loading: false });
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     const fetchHostel = async () => {
@@ -73,12 +74,26 @@ export const HostelDetailPage = () => {
   };
 
   const handleImageUpload = async (e) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    // Validate image types and size
+    const validFiles = files.filter(
+      (f) => f.type.startsWith('image/') && f.size <= 5 * 1024 * 1024
+    );
+
+    if (validFiles.length === 0) {
+      setToast({
+        message: 'No valid images selected. Please choose PNG, JPG, or WEBP images under 5 MB.',
+        type: 'error',
+      });
+      e.target.value = '';
+      return;
+    }
 
     const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append('images', files[i]);
+    for (let i = 0; i < validFiles.length; i++) {
+      formData.append('images', validFiles[i]);
     }
 
     setUploadingImage(true);
@@ -86,13 +101,18 @@ export const HostelDetailPage = () => {
       const res = await managerService.uploadHostelImages(id, formData);
       if (res.success) {
         setHostel((prev) => ({ ...prev, images: res.images }));
-        setToast({ message: 'Images uploaded successfully', type: 'success' });
+        setToast({
+          message: `${validFiles.length} image(s) uploaded successfully!`,
+          type: 'success',
+        });
       }
     } catch (err) {
-      setToast({ message: err.response?.data?.message || 'Failed to upload images', type: 'error' });
+      setToast({
+        message: err.response?.data?.message || 'Failed to upload images',
+        type: 'error',
+      });
     } finally {
       setUploadingImage(false);
-      // Reset input
       e.target.value = '';
     }
   };
@@ -321,11 +341,16 @@ export const HostelDetailPage = () => {
           )}
 
           {/* Hostel Images */}
-          <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-rose-400" /> Hostel Images ({hostel.images?.length || 0})
-              </h3>
+          <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-rose-400" /> Hostel Images ({hostel.images?.length || 0})
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Upload multiple photos showing rooms, facade, amenities, and common areas.
+                </p>
+              </div>
               <div className="relative">
                 <input 
                   type="file" 
@@ -335,9 +360,25 @@ export const HostelDetailPage = () => {
                   disabled={uploadingImage}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                 />
-                <Button type="button" variant="outline" size="sm" icon={uploadingImage ? LoadingSpinner : Upload} disabled={uploadingImage}>
-                  {uploadingImage ? 'Uploading...' : 'Upload Images'}
+                <Button type="button" variant="primary" size="sm" icon={uploadingImage ? LoadingSpinner : Upload} disabled={uploadingImage}>
+                  {uploadingImage ? 'Uploading...' : 'Add Images'}
                 </Button>
+              </div>
+            </div>
+
+            {/* Dropzone prompt */}
+            <div className="border-2 border-dashed border-rose-200 hover:border-teal-400 bg-white/50 hover:bg-white/80 rounded-xl p-4 text-center transition-all cursor-pointer relative group">
+              <input
+                type="file"
+                multiple
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                onChange={handleImageUpload}
+                disabled={uploadingImage}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+              />
+              <div className="flex items-center justify-center gap-2 pointer-events-none text-xs text-slate-500">
+                <ImagePlus className="w-4 h-4 text-rose-400" />
+                <span>Drag & drop or select multiple images at once (PNG, JPG, WEBP up to 5 MB each)</span>
               </div>
             </div>
 
@@ -348,12 +389,20 @@ export const HostelDetailPage = () => {
                     <img 
                       src={getHostelImageUrl(hostel._id, img._id)} 
                       alt={img.filename} 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                      onClick={() => setPreviewImage(getHostelImageUrl(hostel._id, img._id))}
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <button 
+                        onClick={() => setPreviewImage(getHostelImageUrl(hostel._id, img._id))}
+                        className="p-2 bg-white/90 text-slate-700 rounded-full hover:bg-white transition-colors shadow-lg cursor-pointer"
+                        title="View photo"
+                      >
+                        <ImageIcon className="w-4 h-4" />
+                      </button>
                       <button 
                         onClick={() => handleDeleteImage(img._id)}
-                        className="p-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors shadow-lg"
+                        className="p-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors shadow-lg cursor-pointer"
                         title="Delete image"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -366,7 +415,7 @@ export const HostelDetailPage = () => {
               <div className="p-6 rounded-xl bg-white border border-slate-100 text-center flex flex-col items-center gap-2">
                 <ImagePlus className="w-8 h-8 text-slate-300" />
                 <p className="text-xs text-slate-400">
-                  No images uploaded yet. Upload images to showcase your hostel.
+                  No images uploaded yet. Upload images to showcase your hostel to students.
                 </p>
               </div>
             )}
@@ -450,6 +499,29 @@ export const HostelDetailPage = () => {
         confirmText="Delete Permanently"
         loading={deleteDialog.loading}
       />
+
+      {/* Image Preview Lightbox */}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] flex flex-col items-center">
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute -top-10 right-0 text-white hover:text-slate-300 p-2 text-sm flex items-center gap-1 cursor-pointer font-semibold"
+            >
+              <X className="w-5 h-5" /> Close
+            </button>
+            <img
+              src={previewImage}
+              alt="Enlarged view"
+              className="max-h-[80vh] w-auto max-w-full rounded-2xl shadow-2xl object-contain border border-white/20"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

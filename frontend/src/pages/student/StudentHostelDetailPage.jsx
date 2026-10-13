@@ -1,6 +1,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
-import { ArrowLeft, MapPin, BedDouble, CheckCircle2, User, Building2, Tag, IndianRupee, Clock, Navigation } from 'lucide-react';
+import {
+  ArrowLeft,
+  MapPin,
+  BedDouble,
+  CheckCircle2,
+  User,
+  Building2,
+  Tag,
+  IndianRupee,
+  Clock,
+  Navigation,
+  ChevronLeft,
+  ChevronRight,
+  Camera,
+  Maximize2,
+  X,
+} from 'lucide-react';
 import { studentService } from '../../services/studentService';
 import { bookingService } from '../../services/bookingService';
 import { getHostelImageUrl } from '../../services/api';
@@ -17,6 +33,8 @@ const StudentHostelDetailPage = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   
   // Toast and booking operation state
   const [toast, setToast] = useState(null);
@@ -119,27 +137,87 @@ const StudentHostelDetailPage = () => {
       <div className="bg-white/70 backdrop-blur-xl border border-white rounded-3xl overflow-hidden shadow-sm">
         {/* Hostel Image Gallery / Banner if available */}
         {hostel.images && hostel.images.length > 0 && (
-          <div className="h-64 sm:h-80 w-full overflow-hidden relative bg-slate-100 border-b border-white">
-            <img
-              src={getHostelImageUrl(hostel._id, hostel.images[0]._id)}
-              alt={hostel.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }}
-            />
+          <div className="relative bg-slate-900 border-b border-white select-none group">
+            {/* Main Active Image */}
+            <div
+              className="h-72 sm:h-96 w-full overflow-hidden relative cursor-pointer"
+              onClick={() => setIsLightboxOpen(true)}
+            >
+              <img
+                src={getHostelImageUrl(hostel._id, hostel.images[activeImageIndex]?._id || hostel.images[0]?._id)}
+                alt={`${hostel.name} photo ${activeImageIndex + 1}`}
+                className="w-full h-full object-cover transition-all duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
+
+              {/* Photo counter badge */}
+              <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 font-medium shadow-md">
+                <Camera className="w-3.5 h-3.5 text-violet-300" />
+                <span>Photo {activeImageIndex + 1} of {hostel.images.length}</span>
+              </div>
+
+              {/* Fullscreen Expand Hint Button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsLightboxOpen(true);
+                }}
+                className="absolute top-4 right-4 bg-black/60 hover:bg-black/80 backdrop-blur-md text-white p-2 rounded-xl transition-all cursor-pointer shadow-md"
+                title="View Fullscreen"
+              >
+                <Maximize2 className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Prev / Next Arrows if multiple images */}
             {hostel.images.length > 1 && (
-              <div className="absolute bottom-4 right-4 flex gap-2">
-                {hostel.images.slice(1, 4).map((img, i) => (
-                  <img
-                    key={i}
-                    src={getHostelImageUrl(hostel._id, img._id)}
-                    alt={`${hostel.name} ${i + 2}`}
-                    className="w-14 h-14 object-cover rounded-xl border-2 border-white shadow-md cursor-pointer hover:scale-105 transition-transform"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveImageIndex((prev) => (prev === 0 ? hostel.images.length - 1 : prev - 1));
+                  }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-slate-800 shadow-xl flex items-center justify-center transition-all opacity-80 group-hover:opacity-100 hover:scale-105 cursor-pointer z-10"
+                  title="Previous image"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveImageIndex((prev) => (prev === hostel.images.length - 1 ? 0 : prev + 1));
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white text-slate-800 shadow-xl flex items-center justify-center transition-all opacity-80 group-hover:opacity-100 hover:scale-105 cursor-pointer z-10"
+                  title="Next image"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
+
+            {/* Thumbnails Row if multiple images */}
+            {hostel.images.length > 1 && (
+              <div className="p-3 bg-black/40 backdrop-blur-md flex items-center gap-2 overflow-x-auto">
+                {hostel.images.map((img, i) => (
+                  <button
+                    key={img._id || i}
+                    type="button"
+                    onClick={() => setActiveImageIndex(i)}
+                    className={`relative shrink-0 w-14 h-14 rounded-xl overflow-hidden transition-all cursor-pointer ${
+                      activeImageIndex === i
+                        ? 'ring-2 ring-violet-400 scale-105 shadow-md'
+                        : 'opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <img
+                      src={getHostelImageUrl(hostel._id, img._id)}
+                      alt={`Thumbnail ${i + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
                 ))}
               </div>
             )}
@@ -437,6 +515,84 @@ const StudentHostelDetailPage = () => {
           message={toast.message}
           onClose={() => setToast(null)}
         />
+      )}
+
+      {/* Fullscreen Lightbox Modal */}
+      {isLightboxOpen && hostel?.images && hostel.images.length > 0 && (
+        <div
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-4 select-none"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          <div className="flex items-center justify-between text-white py-2 px-4">
+            <span className="text-sm font-medium">
+              {hostel.name} — Photo {activeImageIndex + 1} of {hostel.images.length}
+            </span>
+            <button
+              onClick={() => setIsLightboxOpen(false)}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="relative flex-1 flex items-center justify-center overflow-hidden">
+            {hostel.images.length > 1 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveImageIndex((prev) => (prev === 0 ? hostel.images.length - 1 : prev - 1));
+                }}
+                className="absolute left-4 p-3 bg-white/20 hover:bg-white/40 text-white rounded-full transition-all cursor-pointer z-10"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            )}
+            <img
+              src={getHostelImageUrl(hostel._id, hostel.images[activeImageIndex]?._id)}
+              alt="Enlarged view"
+              className="max-h-[75vh] max-w-full object-contain rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            {hostel.images.length > 1 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveImageIndex((prev) => (prev === hostel.images.length - 1 ? 0 : prev + 1));
+                }}
+                className="absolute right-4 p-3 bg-white/20 hover:bg-white/40 text-white rounded-full transition-all cursor-pointer z-10"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            )}
+          </div>
+
+          {/* Bottom Thumbnails */}
+          {hostel.images.length > 1 && (
+            <div
+              className="flex items-center justify-center gap-2 py-3 overflow-x-auto max-w-2xl mx-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {hostel.images.map((img, i) => (
+                <button
+                  key={img._id || i}
+                  type="button"
+                  onClick={() => setActiveImageIndex(i)}
+                  className={`w-14 h-14 rounded-lg overflow-hidden shrink-0 transition-all cursor-pointer ${
+                    activeImageIndex === i ? 'ring-2 ring-violet-400 scale-110' : 'opacity-40 hover:opacity-80'
+                  }`}
+                >
+                  <img
+                    src={getHostelImageUrl(hostel._id, img._id)}
+                    alt={`Thumb ${i + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

@@ -44,7 +44,7 @@ export const managerService = {
   uploadHostelImages: async (id, formData) => {
     const response = await api.post(`/manager/hostels/${id}/images`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': undefined, // Let browser set boundary automatically
       },
     });
     return response.data;

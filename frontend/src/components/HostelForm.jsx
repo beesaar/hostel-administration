@@ -9,10 +9,15 @@ import {
   DoorOpen,
   ScrollText,
   Save,
+  Image as ImageIcon,
+  Upload,
+  X,
+  ImagePlus,
 } from 'lucide-react';
 import Button from './Button';
 import FacilitySelector from './FacilitySelector';
 import HostelMap from './HostelMap';
+import { getHostelImageUrl } from '../services/api';
 
 const HOSTEL_TYPES = ['Boys', 'Girls', 'Co-ed'];
 
@@ -43,10 +48,39 @@ export const HostelForm = ({
   });
 
   const [ruleInput, setRuleInput] = useState('');
+  const [imagePreviews, setImagePreviews] = useState([]); // Array of { file, previewUrl, id }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageSelect = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const validFiles = files.filter((file) => {
+      const isImage = file.type.startsWith('image/');
+      const isUnder5MB = file.size <= 5 * 1024 * 1024;
+      return isImage && isUnder5MB;
+    });
+
+    const newPreviews = validFiles.map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+      id: `${file.name}-${Date.now()}-${Math.random()}`,
+    }));
+
+    setImagePreviews((prev) => [...prev, ...newPreviews]);
+    e.target.value = '';
+  };
+
+  const removeSelectedImage = (idToRemove) => {
+    setImagePreviews((prev) => {
+      const target = prev.find((p) => p.id === idToRemove);
+      if (target) URL.revokeObjectURL(target.previewUrl);
+      return prev.filter((p) => p.id !== idToRemove);
+    });
   };
 
   const addRule = () => {
@@ -69,7 +103,10 @@ export const HostelForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      imageFiles: imagePreviews.map((p) => p.file),
+    });
   };
 
   const inputClass =
@@ -414,6 +451,105 @@ export const HostelForm = ({
             Add Rule
           </Button>
         </div>
+      </div>
+
+      {/* Section 6: Hostel Photos / Images */}
+      <div className="bg-rose-50/80 border border-white rounded-2xl p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-base font-bold text-slate-800">
+            <ImageIcon className="w-5 h-5 text-rose-400" />
+            <span>Hostel Photos & Gallery</span>
+          </div>
+          <span className="text-xs text-slate-500 font-medium">
+            {imagePreviews.length > 0 ? `${imagePreviews.length} selected` : 'Multiple images allowed'}
+          </span>
+        </div>
+
+        {/* Existing Images (When editing) */}
+        {initialData.images && initialData.images.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-slate-600">Current Uploaded Photos ({initialData.images.length}):</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
+              {initialData.images.map((img) => (
+                <div key={img._id} className="relative rounded-xl overflow-hidden aspect-square border border-slate-200 bg-white shadow-xs">
+                  <img
+                    src={getHostelImageUrl(initialData._id, img._id)}
+                    alt={img.filename}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Drag & drop / upload zone */}
+        <div className="border-2 border-dashed border-rose-200 hover:border-teal-400 bg-white/60 hover:bg-white/90 rounded-2xl p-6 text-center transition-all cursor-pointer relative group">
+          <input
+            type="file"
+            multiple
+            accept="image/png, image/jpeg, image/jpg, image/webp"
+            onChange={handleImageSelect}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            id="hostel-form-images"
+          />
+          <div className="flex flex-col items-center gap-2 pointer-events-none">
+            <div className="p-3 bg-rose-100/80 rounded-2xl group-hover:scale-110 transition-transform">
+              <Upload className="w-6 h-6 text-rose-500" />
+            </div>
+            <p className="text-sm font-bold text-slate-700">
+              Click to select or drag & drop multiple images
+            </p>
+            <p className="text-xs text-slate-400">
+              PNG, JPG, JPEG, WEBP up to 5 MB per image (select as many photos as you want)
+            </p>
+          </div>
+        </div>
+
+        {/* Selected Images Previews */}
+        {imagePreviews.length > 0 && (
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                New Photos to Upload ({imagePreviews.length}):
+              </h4>
+              <button
+                type="button"
+                onClick={() => setImagePreviews([])}
+                className="text-xs text-rose-500 hover:underline font-semibold"
+              >
+                Clear All
+              </button>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {imagePreviews.map((p) => (
+                <div
+                  key={p.id}
+                  className="relative group rounded-xl overflow-hidden aspect-square border border-slate-200 bg-white shadow-sm"
+                >
+                  <img
+                    src={p.previewUrl}
+                    alt={p.file.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
+                    <button
+                      type="button"
+                      onClick={() => removeSelectedImage(p.id)}
+                      className="self-end p-1.5 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors shadow-md"
+                      title="Remove image"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="text-[10px] text-white truncate bg-black/50 px-1.5 py-0.5 rounded-md">
+                      {(p.file.size / (1024 * 1024)).toFixed(1)} MB
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Submit Button */}

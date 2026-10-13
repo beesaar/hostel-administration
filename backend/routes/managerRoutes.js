@@ -28,7 +28,7 @@ router.put('/hostels/:id', updateHostel);
 router.delete('/hostels/:id', deleteHostel);
 
 // 3. Image Upload Operations
-router.post('/hostels/:id/images', upload.array('images', 10), uploadHostelImages);
+router.post('/hostels/:id/images', upload.array('images', 30), uploadHostelImages);
 router.delete('/hostels/:id/images/:imageId', deleteHostelImage);
 
 module.exports = router;

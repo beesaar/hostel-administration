@@ -8,7 +8,9 @@ import {
   Eye,
   Tag,
   Shield,
+  Camera,
 } from 'lucide-react';
+import { getHostelImageUrl } from '../services/api';
 
 export const StudentHostelCard = ({ hostel }) => {
   // Merge facilities + amenities for display, de-duplicated
@@ -16,20 +18,28 @@ export const StudentHostelCard = ({ hostel }) => {
     ...new Set([...(hostel.facilities || []), ...(hostel.amenities || [])]),
   ];
 
-  const hasImage = hostel.images && hostel.images.length > 0 && hostel.images[0];
+  const firstImage = hostel.images && hostel.images.length > 0 ? hostel.images[0] : null;
+  const imageCount = hostel.images?.length || 0;
 
   return (
     <div className="group bg-white/70 border border-white rounded-2xl overflow-hidden backdrop-blur-xl shadow-lg hover:shadow-xl hover:border-violet-100 transition-all duration-300 hover:-translate-y-0.5 flex flex-col justify-between">
-      {hasImage && (
+      {firstImage && (
         <div className="h-44 w-full overflow-hidden relative bg-slate-100 shrink-0">
           <img
-            src={hostel.images[0]}
+            src={typeof firstImage === 'string' ? firstImage : getHostelImageUrl(hostel._id, firstImage._id || firstImage)}
             alt={hostel.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
               e.target.style.display = 'none';
             }}
           />
+          {imageCount > 1 && (
+            <div className="absolute top-3 left-3">
+              <span className="px-2 py-1 rounded-lg text-[11px] font-semibold bg-black/60 text-white backdrop-blur-md flex items-center gap-1">
+                <Camera className="w-3 h-3" /> {imageCount} photos
+              </span>
+            </div>
+          )}
           <div className="absolute top-3 right-3">
             <span
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold backdrop-blur-md shadow-sm border ${

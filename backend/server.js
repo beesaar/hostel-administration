@@ -53,7 +53,24 @@ app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/complaints', require('./routes/complaintRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
-// 7. Define Server Port & Start Server
+// 7. Error Handling Middleware (including Multer file upload errors)
+app.use((err, req, res, next) => {
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ success: false, message: 'File too large. Maximum size per image is 5 MB.' });
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      return res.status(400).json({ success: false, message: 'Too many files. You can upload up to 30 images at once.' });
+    }
+    return res.status(400).json({ success: false, message: `Upload error: ${err.message}` });
+  }
+  if (err) {
+    return res.status(400).json({ success: false, message: err.message || 'Server Error' });
+  }
+  next();
+});
+
+// 8. Define Server Port & Start Server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
